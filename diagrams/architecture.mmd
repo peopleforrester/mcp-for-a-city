@@ -1,0 +1,75 @@
+%%{init: {"theme":"base","fontFamily":"Arial, Helvetica, sans-serif","themeVariables":{"fontSize":"21px","primaryColor":"#f3f3f3","primaryTextColor":"#000000","primaryBorderColor":"#005faa","lineColor":"#005faa","clusterBkg":"#ffffff","clusterBorder":"#a9bdd4","edgeLabelBackground":"#ffffff"},"flowchart":{"nodeSpacing":28,"rankSpacing":48,"padding":14,"htmlLabels":true,"curve":"basis"}}}%%
+flowchart LR
+  %% Managed device: pinks.  Tool traffic: orange, red, yellow.  Control plane: blues and greens.  Model traffic: purple and black.
+  classDef user fill:#ff3c64,stroke:#9c1a37,color:#ffffff,stroke-width:3px
+  classDef agent fill:#ff8fa8,stroke:#9c1a37,color:#051932,stroke-width:3px
+  classDef device fill:#ffffff,stroke:#ff3c64,color:#051932,stroke-width:2px,stroke-dasharray:5 3
+  classDef toolgw fill:#c23b16,stroke:#ffc800,color:#ffffff,stroke-width:3px
+  classDef tool fill:#ffe1b3,stroke:#ed561b,color:#051932,stroke-width:2px
+  classDef tooldata fill:#ffc800,stroke:#c27a00,color:#051932,stroke-width:3px
+  classDef vendor fill:#ffffff,stroke:#ed561b,color:#051932,stroke-width:2px,stroke-dasharray:6 4
+  classDef ctrl fill:#ffffff,stroke:#005faa,color:#051932,stroke-width:2px,stroke-dasharray:5 3
+  classDef regmcp fill:#005faa,stroke:#002d55,color:#ffffff,stroke-width:3px
+  classDef regmodel fill:#0b8a5c,stroke:#064d33,color:#ffffff,stroke-width:3px
+  classDef modelgw fill:#1a0a2e,stroke:#bc37de,color:#ffffff,stroke-width:3px
+  classDef model fill:#e3c6f3,stroke:#6a1b9a,color:#1a0a2e,stroke-width:2px
+  classDef bypass fill:#ffffff,stroke:#ff3c64,color:#9c1a37,stroke-width:3px,stroke-dasharray:6 4
+  classDef obs fill:#222222,stroke:#000000,color:#ffffff,stroke-width:3px
+
+  subgraph DEV["<b>Managed device</b>"]
+    direction TB
+    U["<b>End user</b>"]:::user -- "<b>asks</b>" --> A["<b>AI application / agent</b><br/>MCP client"]:::agent
+    CP["<b>Client policy</b><br/>which servers may load"]:::device -. "<b>allow list</b>" .-> A
+    OSP["<b>OS and app policy</b><br/>Outlook guard: deny<br/>Edge remote debugging: off"]:::device -. "<b>device policy</b>" .-> A
+  end
+
+  subgraph TOOL["<b>Tool traffic</b>"]
+    direction LR
+    P["<b>MCP proxy</b><br/>how does the request<br/>reach the server?"]:::tool -- "<b>route</b>" --> G["<b>MCP gateway</b><br/>should this caller be allowed?<br/>identity, authorization,<br/>policy, rate limits"]:::toolgw
+    G -- "<b>authorized call</b>" --> API["<b>Service boundary</b><br/>can traffic reach<br/>this backend?"]:::tool -- "<b>exchanged token</b>" --> SRV["<b>MCP server</b><br/>wrapped where needed,<br/>exchanged token,<br/>never the user's"]:::tool -- "<b>API call</b>" --> T["<b>Tool /</b><br/><b>enterprise data</b>"]:::tooldata
+    G -- "<b>one tools/call</b>" --> V["<b>Third-party hosted MCP</b><br/>vendor agent acts under<br/>the user's own grant"]:::vendor
+  end
+
+  subgraph MODEL["<b>Model traffic</b>"]
+    direction LR
+    AG["<b>AI gateway</b><br/>which model, which provider?<br/>quotas, guardrails"]:::modelgw -- "<b>inference</b>" --> LLM["<b>LLM providers</b>"]:::model
+  end
+
+  subgraph CTRL["<b>Control plane</b>"]
+    direction TB
+    R[("<b>MCP registry</b><br/>what exists, who owns it")]:::regmcp
+    MR[("<b>Model registry</b>")]:::regmodel
+    IDP["<b>Identity provider</b><br/>OIDC, OAuth, ID-JAG"]:::ctrl
+    WI["<b>Workload identity</b><br/>which agent is calling"]:::ctrl
+    GIT["<b>GitOps + admission control</b><br/>no unsanctioned server lands"]:::ctrl
+  end
+
+  OBS[("<b>Audit and traces</b><br/>joined by traceparent")]:::obs
+
+  A -- "<b>tools/call</b>" --> P
+  A -- "<b>prompt</b>" --> AG
+  R -. "<b>approved servers</b>" .-> CP
+  R -. "<b>routing table</b>" .-> G
+  MR -. "<b>approved models</b>" .-> AG
+  IDP -. "<b>SSO, ID-JAG</b>" .-> A
+  IDP -. "<b>token validation</b>" .-> G
+  WI -. "<b>agent identity</b>" .-> G
+  GIT -. "<b>deploys servers</b>" .-> SRV
+  G -- "<b>audit log</b>" --> OBS
+  AG -- "<b>audit log</b>" --> OBS
+  A -- "<b>client trace</b>" --> OBS
+
+  A -. "<b>shell, COM automation</b>" .-> OUT["<b>Outlook</b>"]:::bypass
+  A -. "<b>browser remote debugging</b>" .-> TM["<b>Teams</b>"]:::bypass
+
+  style DEV fill:#ffe4ea,stroke:#ff3c64,stroke-width:2px
+  style TOOL fill:#fff1dc,stroke:#ed561b,stroke-width:2px
+  style MODEL fill:#ead7f5,stroke:#6a1b9a,stroke-width:2px
+  style CTRL fill:#dcefe8,stroke:#0b8a5c,stroke-width:2px
+
+  %% tool traffic orange, model traffic purple, control blue-green dotted, audit black, bypass pink-red
+  linkStyle 0,3,4,5,6,7,9 stroke:#ed561b,stroke-width:4px
+  linkStyle 8,10,13 stroke:#6a1b9a,stroke-width:4px
+  linkStyle 1,2,11,12,14,15,16,17 stroke:#0b8a5c,stroke-width:3px
+  linkStyle 18,19,20 stroke:#222222,stroke-width:3px
+  linkStyle 21,22 stroke:#ff3c64,stroke-width:5px
