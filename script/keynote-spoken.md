@@ -1,11 +1,11 @@
 <!--
-ABOUTME: The words spoken on stage at MCP Dev Summit Toronto, 2026-10-06, taken from the deck's speaker notes.
-ABOUTME: Build slides that share one spoken passage are merged; slide numbers follow the deck as shown (hidden appendix slides excluded).
+ABOUTME: The spoken script of the keynote, slide by slide, from the speaker notes of the deck as delivered.
+ABOUTME: Generated from the live deck; edit the notes in the deck, not this file.
 -->
 
 # Governing MCP for a Workforce the Size of a City: the spoken script
 
-Michael Forrester, MCP Dev Summit Toronto, Tuesday 2026-10-06. Speaker notes exported from the deck on 2026-10-05, after the dry-run restructure.
+MCP Dev Summit Toronto, Tuesday 6 October 2026. 39 slides shown, about 1947 words. Generated from the deck on 2026-10-05.
 
 ## 1. Governing MCP for a Workforce the Size of a City
 
