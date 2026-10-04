@@ -9,7 +9,8 @@ A cartoon walkthrough of the keynote in the deck's cut-paper style.
 
 | Cut | Link |
 |---|---|
-| Narrated, 1080p, 6 min 30 s | https://github.com/peopleforrester/mcp-city-film/releases/tag/v0.2 |
+| Narrated, 1080p, 6 min 32 s, follows the deck as presented | https://github.com/peopleforrester/mcp-city-film/releases/tag/v0.3 |
+| Earlier narrated cut, 1080p, 6 min 30 s | https://github.com/peopleforrester/mcp-city-film/releases/tag/v0.2 |
 | Captions only, 1080p, 1 min 50 s | https://github.com/peopleforrester/mcp-city-film/releases/tag/v0.1 |
 | Plays on the site | https://mcp.michaelrishiforrester.com/#film |
 
