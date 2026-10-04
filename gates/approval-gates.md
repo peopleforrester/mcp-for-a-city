@@ -7,7 +7,7 @@ ABOUTME: Generated from the site's gate data; edit src/data/gates.ts in peoplefo
 
 From "Governing MCP for a Workforce the Size of a City", MCP Dev Summit Toronto, 6 October 2026. A request to allow an MCP server passes through these in order. Walk one interactively at https://mcp.michaelrishiforrester.com/#gates.
 
-## Gate 1: Do we know the vendor?
+## Gate 1: Do we have a relationship with the vendor?
 
 Who answers: Procurement and security
 
@@ -32,7 +32,7 @@ Sources:
 - [Anthropic, connector review criteria](https://claude.com/docs/connectors/building/review-criteria)
 - [MintMCP, MCP server security and vetting](https://www.mintmcp.com/blog/mcp-server-security-vetting)
 
-## Gate 2: Do we need it, and is it core?
+## Gate 2: Is there a real business need?
 
 Who answers: The business owner
 
@@ -57,7 +57,7 @@ Sources:
 
 - [Cerbos, MCP server vetting checklist for enterprises](https://www.cerbos.dev/blog/mcp-server-vetting-checklist)
 
-## Gate 3: How well is it built, and does it need wrapping?
+## Gate 3: Is it well built, and wrapped where we needed?
 
 Who answers: The platform team
 
@@ -111,7 +111,7 @@ Sources:
 - [MCP specification 2026-07-28, changelog](https://modelcontextprotocol.io/specification/2026-07-28/changelog)
 - [SSOJet, 12 questions a CISO will ask about your MCP server](https://ssojet.com/blog/ciso-mcp-server-security-questions)
 
-## Gate 5: Does it carry authorization?
+## Gate 5: Does it meet our security standards?
 
 Who answers: The platform team
 
@@ -140,7 +140,7 @@ Sources:
 - [MCP specification 2026-07-28, authorization security considerations](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization/security-considerations)
 - [Zhou et al., arXiv 2605.22333](https://arxiv.org/abs/2605.22333)
 
-## Gate 6: Is the vendor itself compliant?
+## Gate 6: Is the vendor certified? SOC 2, ISO 27001
 
 Who answers: Procurement and security
 
