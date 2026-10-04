@@ -23,7 +23,8 @@ checklist with you.
 | [research/source-ledger.md](research/source-ledger.md) | Every claim on the gate and wrapping slides, its source, how it was read, and the date |
 | [sources/sources.md](sources/sources.md) | The sources slide |
 | [art/](art/) | The shadow-play scenes, the ship outlines, the cable sketches, the attack scenes. See the note below |
-| [The shadow-play film](https://github.com/peopleforrester/mcp-city-film/releases/tag/v0.1) | A two-minute cartoon walkthrough of the talk, captions only, rendered from the same art (source: [mcp-city-film](https://github.com/peopleforrester/mcp-city-film)) |
+| [film/](film/) | The shadow-play film: the narrated cut and the captions-only cut, as release links |
+| [qr/mcp-site-qr.png](qr/mcp-site-qr.png) | The QR code from the closing slides, pointing at the site |
 
 Every figure in the talk has a source; the ledger is where they are checked
 claim by claim. Specification facts are stated against the 2026-07-28 revision
