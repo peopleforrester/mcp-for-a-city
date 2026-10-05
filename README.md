@@ -14,7 +14,7 @@ checklist with you.
 
 | Path | What |
 |---|---|
-| [slides/governing-mcp-toronto-2026.pdf](slides/governing-mcp-toronto-2026.pdf) | The deck, exported 2026-10-05 after the dry-run restructure (hidden appendix slides included at the end) |
+| [slides/governing-mcp-toronto-2026.pdf](slides/governing-mcp-toronto-2026.pdf) | The deck as delivered: the 39 slides shown, exported 2026-10-05 |
 | [script/keynote-spoken.md](script/keynote-spoken.md) | The spoken script, slide by slide, from the speaker notes of the deck as delivered, generated 2026-10-05 |
 | [gates/approval-gates.md](gates/approval-gates.md) | The six approval gates as a checklist a platform team can use |
 | [diagrams/architecture.png](diagrams/architecture.png) | The enterprise architecture diagram, with its [Mermaid source](diagrams/architecture.mmd) |

@@ -5,7 +5,7 @@ ABOUTME: Generated from the live deck; edit the notes in the deck, not this file
 
 # Governing MCP for a Workforce the Size of a City: the spoken script
 
-MCP Dev Summit Toronto, Tuesday 6 October 2026. 39 slides shown, about 1947 words. Generated from the deck on 2026-10-05.
+MCP Dev Summit Toronto, Tuesday 6 October 2026. 39 slides shown, about 1947 words. Generated from the deck as delivered, 2026-10-05.
 
 ## 1. Governing MCP for a Workforce the Size of a City
 
@@ -147,7 +147,7 @@ Edge is the approved browser, the only one that does SSO without shenanigans. Th
 
 So what was the biggest lever? Was it the policy? The architecture? The proxies, the registries? None of that alone. Do not get me wrong, nothing happens without the technology in place. But we had to win the hearts and minds of users, because for the first time an internal team, three levels of internal, is now a SaaS company. Our biggest threat is our own end users. If we do not get their buy-in, send the right signals and provide the features they want, they ask the agent to do it. That, my friends, is how you get shadow IT. Here is what winning them looks like. When I walk into an Accenture office and go to the Solution Center, our walk-up internal support, those people are top-notch: friendly, proactive, in partnership. That is the relationship you need with your people when you offer MCP tools. Why is there no Outlook server? Because we have to solve the identity problem, and the attribution problem, in ways we have never had to before.
 
-## 36. Here is what you need to do
+## 36. Connect with your users as much as you connect the technology
 
 Here is what you need to do. Love your users. Figure out what they need. Say no when you must, and explain why. Then figure out how to get them to yes. The worst thing you can do is say no with no reason and no path. You will never scale to the number of users you have, so win their hearts and minds, so they come to you and say: I found an opening. You would be shocked how many people are willing to help. And trust me, you will never run the permutations of creativity a non-engineer will run.
 
