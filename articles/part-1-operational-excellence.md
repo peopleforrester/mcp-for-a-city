@@ -5,7 +5,7 @@ date: 2026-09-21
 status: draft
 series: "Operating MCP at Scale"
 part: 1
-sources_verified_on: 2026-09-21
+sources_verified_on: 2026-10-05
 ---
 
 # The Protocol Moved Under You and Nobody Migrates You
@@ -23,8 +23,8 @@ article about a protocol revision:
 > "Even with MCP dynamic tool discovery, some clients still hardcode tool schemas
 > as if they were fixed APIs."
 
-Their conclusion from that incident is the most useful sentence written about
-operating this protocol so far:
+Their conclusion from that incident is the most useful sentence I have found
+about operating this protocol:
 
 > "Defensive evolution is part of operating a public service."
 
@@ -35,8 +35,8 @@ thing available.
 
 ## What 2026-07-28 removed
 
-The current specification revision is the largest since MCP launched, and the
-headline is subtraction:
+The current specification revision lists nine major changes, and the headline is
+subtraction:
 
 - Protocol-level sessions, and the `Mcp-Session-Id` header
 - The `initialize` handshake
@@ -46,17 +46,17 @@ headline is subtraction:
 
 Server-initiated interaction was replaced by Multi Round-Trip Requests: a server
 returns an `InputRequiredResult`, and the client retries the original request
-carrying `inputResponses` under a new JSON-RPC id. Four primitives were
+carrying `inputResponses` under a new JSON-RPC id. Four features were
 deprecated in the same release, with earliest removal in the first revision
 released on or after 2027-07-28: Roots, Sampling, Logging, and OAuth Dynamic
 Client Registration.
 
-Three of those five were replaced in the same release, and saying so matters
-because the article you are reading is about cost. `server/discover` is a new
-mandatory RPC returning supported versions, capabilities and identity in one
-call. `subscriptions/listen` carries server-to-client change notifications.
-Multi Round-Trip Requests replaces server-initiated interaction. Two were not
-replaced: SSE resumability, and per-connection session state.
+Three of the five removals were replaced in the same release, and saying so
+matters because the article you are reading is about cost. `server/discover` is a
+new mandatory RPC returning supported versions, capabilities and identity in one
+call. `subscriptions/listen` carries server-to-client change notifications. Multi
+Round-Trip Requests replaces server-initiated interaction. Two were not replaced:
+SSE resumability, and per-connection session state.
 
 Most of this is good. Removing protocol-level sessions is what makes an MCP
 server an ordinary horizontally scalable HTTP workload, and the new required
@@ -66,11 +66,11 @@ became easier to operate.
 It also became a thing you had to migrate to, across every client and server you
 run, at once, in a fleet you do not fully control.
 
-## The migration guide is ten repositories deep
+## The migration guidance lives in the SDK repositories
 
 The documentation site does not carry one. Its index at
-`modelcontextprotocol.io/llms.txt` is 354 lines and contains **zero** matches for
-"migrat" or "upgrad", checked on 2026-09-21. What the site gives you is a
+`modelcontextprotocol.io/llms.txt` is 356 lines and contains **zero** matches for
+"migrat" or "upgrad", checked on 2026-10-05. What the site gives you is a
 **Versioning and Compatibility** page, which specifies what the eras are and how
 they negotiate. Moving a running estate between them is a different document, and
 the site does not have it.
@@ -79,20 +79,22 @@ The guidance exists in the SDKs. The TypeScript SDK ships
 `docs/migration/support-2026-07-28.md` covering exactly this move, plus an
 automated codemod you invoke as `npx @modelcontextprotocol/codemod@latest
 v1-to-v2 .`. Python ships `docs/migration.md` and `docs/protocol-versions.md`.
-Java ships `MIGRATION-2.0.md`. C# ships `docs/versioning.md`. Ruby and PHP both
-ship protocol-version documentation.
+Java ships `MIGRATION-2.0.md`, though that covers its own 1.x to 2.x move inside
+the `2025-11-25` era. C# ships `docs/versioning.md`. Go documents both models in
+`docs/protocol.md`. Ruby and PHP both ship protocol-version documentation.
 
 Others have filled the gap from outside. AWS published "MCP went stateless: is
-your AWS MCP server deployment Well-Architected?" on 2026-09-01, reaching the
-same pillar frame from the platform side, with a ten-question self-check and a
-migration path. There is a community tool, `mcp-migrate`, carrying 21 rules with fixers for
-19 of them. And at this very summit, Akash Sathish is presenting a session
-billed, in his own words, as "the migration guide I had to write for myself",
-with code diffs in both the TypeScript and Python SDKs.
+your AWS MCP server deployment Well-Architected?" on 2026-09-01, reaching the same
+pillar frame from the platform side, with a ten-question self-check and a
+migration path. There is a community tool, `mcp-migrate`, carrying 21 rules with
+fixers for 19 of them. And at MCP Dev Summit Toronto, on 5 and 6 October 2026,
+Akash Sathish is presenting a session billed, in his own words, as "the migration
+guide I had to write for myself", with code diffs in both the TypeScript and
+Python SDKs.
 
-So the honest claim is narrow, and it is still worth making. Ten SDK repositories
-each tell you how to move that SDK. One cloud vendor tells you how to move on
-their platform. One conference talk tells you what one auditor found. **No
+So the honest claim is narrow, and it is still worth making. Most of the SDKs that
+ship the revision tell you how to move that SDK. One cloud vendor tells you how to
+move on their platform. One conference talk tells you what one auditor found. **No
 project-published, operator-facing document tells you what order to move a fleet
 in**, and order is the whole problem, because the compatibility matrix has two
 cells that carry the operational risk:
@@ -121,19 +123,21 @@ the servers, the inverse is correct, and the matrix supports it just as well.
 
 ## The SDKs are behind, and that is not a criticism
 
-There are **ten** official SDKs. Tier 1 is TypeScript, Python, C#, Go and Rust.
-Tier 2 is Java and Ruby. Tier 3 is Swift, PHP and Kotlin.
+There are **ten** official SDKs. Tier 1 is TypeScript, Python, C#, Go, Rust
+and Ruby. Tier 2 is Java. Tier 3 is Swift, PHP and Kotlin.
 
-Measured from the repositories themselves, all of Tier 1 ships `2026-07-28`:
-TypeScript on its v2 line, Python at v2.2.0, C# at v2.2.0, Go at v1.8.0 where it
-has been the default since v1.7.0, Rust at v3.4.0. Ruby and PHP ship it too,
-which is worth saying because both are routinely left out of these lists.
+Measured from the repositories themselves on 2026-10-05, all of Tier 1 ships
+`2026-07-28`: TypeScript on its v2 line, Python at v2.3.0, C# at v2.2.0, Go at
+v1.8.0 where it has been the default since v1.7.0, Rust at v3.5.0, Ruby at
+v1.7.0. PHP ships it too, which is worth saying because it is routinely left out
+of these lists.
 
-One packaging detail catches teams out. TypeScript's v2 serves both eras from the
-same factory by default, and `legacy: 'reject'` is what makes an endpoint
-modern-only. But the old package name still resolves to the v1 line, so a team
-that has not changed its `package.json` is on `2025-11-25` without having chosen
-anything.
+One packaging detail catches teams out. TypeScript's v2 server entry points serve
+both eras from the same factory by default, and `legacy: 'reject'` is what makes
+an endpoint modern-only. A hand-constructed v2 client or server still speaks the
+2025 protocol until you opt in. And the old package name still resolves to the v1
+line, so a team that has not changed its `package.json` is on `2025-11-25`
+without having chosen anything.
 
 Three do not: **Java**, whose changelog release-line table tracks `2025-11-25`,
 **Kotlin**, where `LATEST_PROTOCOL_VERSION` is still `2025-11-25` in `common.kt`,
@@ -143,9 +147,9 @@ Under the project's published tier obligations, **none of those is late**. Tier 
 has six months. Tier 3 carries no commitment at all. The lag is bounded and it is
 legible, which is more than most ecosystems offer.
 
-Do not read the tier as a predictor, though. PHP is Tier 3 and dual-era. Ruby is
-Tier 2 and modern. Java is Tier 2 and is not. The tier sets the obligation, not
-the outcome, so the only way to know where an SDK stands is to look.
+Do not read the tier as a predictor, though. PHP is Tier 3 and dual-era. Java is
+Tier 2 and is not. The tier sets the obligation, not the outcome, so the only way
+to know where an SDK stands is to look.
 
 It is still a planning input. If your estate has a Java client, your migration
 window is not set by your own engineering capacity. It is set by someone else's
@@ -161,20 +165,21 @@ solve it.** The schema defines `ToolAnnotations.idempotentHint`, which says
 whether repeating a call is harmless. It is a hint the same schema tells clients
 not to trust from an untrusted server, and it deduplicates nothing, so it gives
 you no way to make a retry safe when the answer is false. Resumability was
-deleted. On Streamable HTTP, closing the response
-stream **MUST** be treated by the server as cancellation, and the client **MUST**
-re-issue with a new JSON-RPC id. So a retried tool call is a fresh call, and
-whether that double-charges a customer is entirely a property of your
-application. There is no `Idempotency-Key` convention in the changelog or the
-best-practices documentation. Nothing warns you about this at upgrade time.
+deleted. On Streamable HTTP, closing the SSE response stream **MUST** be treated
+by the server as cancellation, and the client **MUST** re-issue with a new
+JSON-RPC id. So a retried tool call is a fresh call, and whether that
+double-charges a customer is entirely a property of your application. There is no
+`Idempotency-Key` convention in the changelog or the best-practices documentation.
+The specification does not flag this at upgrade time; AWS's self-check does,
+asking "Are your tools idempotent so clients can safely re-issue any broken call?"
 
 **Your monitoring may be reporting health while every call fails, and this one is
-not new.** Tool execution errors have been returned as `isError: true` **inside
-an HTTP 200** since the first revision, so a dashboard built on 5xx rates has
-been blind to them for two years. That is correct protocol design, since a tool
-failing is not a transport failure. The revision did not cause it. The revision
-is simply when a lot of teams will rebuild their monitoring anyway, which makes
-it the moment to fix it. Health checks have to inspect the body.
+not new.** Tool execution errors have been returned as `isError: true` **inside an
+HTTP 200** since the first revision, so a dashboard built on 5xx rates has been
+blind to them for nearly two years. That is correct protocol design, since a tool
+failing is not a transport failure. The revision did not cause it. The revision is
+simply when a lot of teams will rebuild their monitoring anyway, which makes it
+the moment to fix it. Health checks have to inspect the body.
 
 **The new required headers break 2025-era CORS configurations.** The allow-list
 lives on the server, not the client. A browser-based client calling a 2025-era
@@ -189,46 +194,51 @@ standard headers, not two: `MCP-Protocol-Version` as well, which is not new,
 which is why the two new ones are the interesting part. And `Mcp-Name` is
 conditional rather than universal, required on `tools/call`, `resources/read` and
 `prompts/get`. The harder case is one further out: `Mcp-Param-*` headers
-generated from `x-mcp-header` are dynamically named, and dynamically named
-headers cannot be statically allow-listed for credentialed CORS at all.
+generated from `x-mcp-header` are dynamically named, and the TypeScript SDK has
+browser clients skip mirroring them because "dynamically named headers cannot be
+statically allow-listed for credentialed CORS".
 
 **A new attack class arrives with the migration.** Stateless servers need
 application-level state handles, and the project's security best practices are
 explicit: "MCP servers **MUST NOT** treat possession of a state handle as
-authentication." Where that sentence lives matters. The normative specification
-says it "has no concept of a state handle", and that from the wire's perspective
-a handle is an ordinary string. The guidance sits in the documentation, and the
-tools page puts it plainly: "For authenticated servers, a handle is a name, not a
-capability." An implementation that treats a returned handle as a capability has
-built a bearer token by accident.
+authentication." Where that sentence lives matters. The specification's tools
+page, in a section it marks non-normative, says the protocol "has no concept of a
+state handle", and that from the wire's perspective a handle is an ordinary
+string. The binding rule sits in the security documentation, which also gives the
+fix: key stored state as `<user_id>:<handle>`, with the user ID taken from the
+verified token. The tools page puts the principle plainly: "For authenticated
+servers, a handle is a name, not a capability." An authenticated server that
+treats a returned handle as a capability has built a bearer token by accident.
 
-**And one admission worth reading between the lines.** The revision now says
-servers **SHOULD** return `tools/list` in deterministic order. A specification
-only needs to say that because implementations were shuffling, which was
-invalidating clients' prompt caches. Your costs were being set by somebody else's
-iteration order.
+**And one line worth reading closely.** The revision now says servers **SHOULD**
+return `tools/list` in deterministic order, and gives the reason: it enables
+client-side caching and improves LLM prompt cache hit rates. Against any server
+that does not order its list, your costs are set by somebody else's iteration
+order.
 
-## Version skew is an operating condition, not an event
+## Version skew does not end
 
 The instinct is to treat a protocol revision as a project with an end date. At
 fleet scale it is not.
 
 Clients update on their own schedules and some of them are desktop applications
 on laptops you do not administer. Servers update when their maintainers choose,
-and in one measurement study 193 of 464 confirmed servers, 41.6 percent, had
-disappeared 72 hours later. Three of the ten SDKs are on the previous era by
-design. The deprecated primitives have a removal date more than a year out, which
-means you will be running code that uses them, knowingly, for a long time.
+and public ones come and go: in one measurement study of internet-facing servers,
+193 of 464 confirmed servers, 41.6 percent, had disappeared 72 hours later. Three
+of the ten SDKs are still on the previous era, within their tier obligations. The
+deprecated features cannot be removed before the first revision released on or
+after 2027-07-28, which means you will be running code that uses them, knowingly,
+for a long time.
 
 So the operational question is not "when is the migration finished". It is
 **"what does my fleet do when it contains both eras at once, indefinitely"**, and
 that is a design problem rather than a scheduling one.
 
 One concrete trap from the migration window itself: the Python SDK's dual-era
-server keeps legacy sessions in a plain in-process dictionary. There is no
-distributed session store and no way to plug one in. So two workers means sticky
-routing or a `404 Session not found`, during exactly the period when you are
-carrying both eras.
+server keeps legacy sessions in "a plain in-process `dict`", and its documentation
+is blunt: "There is no distributed session store and no way to plug one in." So
+two workers means sticky routing or a `404 Session not found`, during exactly the
+period when you are carrying both eras.
 
 There is one escape and it is worth knowing: `stateless_http=True` applies to the
 legacy leg and buys free load balancing for legacy clients, at the cost of the
@@ -242,12 +252,13 @@ and changes when you change it. Neither is true here. The protocol is governed
 elsewhere, the servers are largely other people's code, and the caller is
 non-deterministic.
 
-Four things follow, and none of them are generic advice:
+Four things follow:
 
 1. **Instrument the body, not the status code.** Anything else reports health
    that is not there.
-2. **Sequence the migration servers-first**, because the failure mode of the
-   other order is silent rather than loud.
+2. **Make whichever side you control dual-era first**, usually the servers,
+   because a single-era move against the other population lands in a failing
+   cell of the matrix, and one of those can fail silently.
 3. **Decide your idempotency convention yourself, and write it down**, because
    the specification will not do it for you and a retry is a new call.
 4. **Design for permanent version skew**, because your fleet will contain both
@@ -255,15 +266,13 @@ Four things follow, and none of them are generic advice:
 
 The protocol got better on 2026-07-28. The maintainers said in the release post
 that there would be a migration cost, shipped four Tier 1 SDKs with migration
-notes on the day, and set a twelve-month floor under every deprecation so the
-exits can be scheduled. That is more than most protocols offer and it should be
-said plainly.
+notes on the day, and adopted a deprecation policy with a twelve-month minimum
+window so the exits can be scheduled. That is more than most protocols offer and
+it should be said plainly.
 
 What none of it answers is the estate-level question: in what order does an
 organization move a fleet it does not fully control. That part is unwritten, and
 it is the part that lands on operators.
-
-That is not a complaint about the change. It is the beginning of the job.
 
 ---
 
@@ -271,12 +280,12 @@ That is not a complaint about the change. It is the beginning of the job.
 chain that ends with you. Parts three, four and five cover reliability,
 performance and cost.*
 
-*Every figure in this article is sourced below and was verified against the
-primary source on 2026-09-22.*
+*Every figure here is sourced below and was re-verified against the primary
+source on 2026-10-05.*
 
 ## Sources
 
-All URLs returned HTTP 200 on 2026-09-22.
+All URLs returned HTTP 200 on 2026-10-05.
 
 **Specification, revision 2026-07-28**
 1. Changelog. https://modelcontextprotocol.io/specification/2026-07-28/changelog
@@ -285,29 +294,34 @@ All URLs returned HTTP 200 on 2026-09-22.
 4. Streamable HTTP transport. https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http
 5. Multi Round-Trip Requests. https://modelcontextprotocol.io/specification/2026-07-28/basic/patterns/mrtr
 6. Tools, for `isError` and the stateful-tools guidance. https://modelcontextprotocol.io/specification/2026-07-28/server/tools
-7. Feature lifecycle and deprecation policy. https://modelcontextprotocol.io/community/feature-lifecycle
+7. Schema, for `ToolAnnotations.idempotentHint`. https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/2026-07-28/schema.ts
+8. Feature lifecycle and deprecation policy. https://modelcontextprotocol.io/community/feature-lifecycle
 
 **Documentation and governance**
-8. Documentation index, the 354-line file. https://modelcontextprotocol.io/llms.txt
-9. Security Best Practices, source of the state-handle rule. https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices
-10. SDK tiering system. https://modelcontextprotocol.io/community/sdk-tiers
-11. The authoritative list of ten SDKs and their tiers. https://modelcontextprotocol.io/docs/2026-07-28/sdk
+9. Documentation index, the 356-line file. https://modelcontextprotocol.io/llms.txt
+10. Security Best Practices, source of the state-handle rule. https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices
+11. SDK tiering system. https://modelcontextprotocol.io/community/sdk-tiers
+12. The authoritative list of ten SDKs and their tiers. https://modelcontextprotocol.io/docs/2026-07-28/sdk
+13. Release announcement, David Soria Parra and Den Delimarsky, 2026-07-28. https://blog.modelcontextprotocol.io/posts/2026-07-28/
 
 **SDK evidence**
-12. TypeScript SDK. https://github.com/modelcontextprotocol/typescript-sdk
-13. TypeScript upgrade guide and codemod. https://ts.sdk.modelcontextprotocol.io/v2/migration/upgrade-to-v2
-14. TypeScript legacy-client serving and the `legacy: 'reject'` opt-out. https://ts.sdk.modelcontextprotocol.io/v2/serving/legacy-clients
-15. Python SDK legacy clients, the in-process dictionary. https://github.com/modelcontextprotocol/python-sdk/blob/main/docs/run/legacy-clients.md
-16. Python SDK CORS for browser clients. https://py.sdk.modelcontextprotocol.io/run/asgi/
-17. Go SDK version-to-protocol table. https://github.com/modelcontextprotocol/go-sdk/blob/main/README.md
-18. Java SDK changelog. https://github.com/modelcontextprotocol/java-sdk/blob/main/CHANGELOG.md
-19. Kotlin SDK `LATEST_PROTOCOL_VERSION`. https://github.com/modelcontextprotocol/kotlin-sdk/blob/main/kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/types/common.kt
-20. Swift SDK. https://github.com/modelcontextprotocol/swift-sdk
-21. Ruby SDK. https://github.com/modelcontextprotocol/ruby-sdk
-22. PHP SDK. https://github.com/modelcontextprotocol/php-sdk
+14. TypeScript SDK. https://github.com/modelcontextprotocol/typescript-sdk
+15. TypeScript guide to supporting 2026-07-28, including the opt-in and the CORS notes. https://github.com/modelcontextprotocol/typescript-sdk/blob/main/docs/migration/support-2026-07-28.md
+16. TypeScript upgrade guide and codemod. https://ts.sdk.modelcontextprotocol.io/v2/migration/upgrade-to-v2
+17. TypeScript legacy-client serving and the `legacy: 'reject'` opt-out. https://ts.sdk.modelcontextprotocol.io/v2/serving/legacy-clients
+18. Python SDK legacy clients, the in-process dictionary. https://github.com/modelcontextprotocol/python-sdk/blob/main/docs/run/legacy-clients.md
+19. Python SDK CORS for browser clients. https://py.sdk.modelcontextprotocol.io/run/asgi/
+20. Go SDK version-to-protocol table. https://github.com/modelcontextprotocol/go-sdk/blob/main/README.md
+21. Java SDK changelog. https://github.com/modelcontextprotocol/java-sdk/blob/main/CHANGELOG.md
+22. Java SDK 2.0 migration guide. https://github.com/modelcontextprotocol/java-sdk/blob/main/MIGRATION-2.0.md
+23. Kotlin SDK `LATEST_PROTOCOL_VERSION`. https://github.com/modelcontextprotocol/kotlin-sdk/blob/main/kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/types/common.kt
+24. Swift SDK. https://github.com/modelcontextprotocol/swift-sdk
+25. Ruby SDK. https://github.com/modelcontextprotocol/ruby-sdk
+26. PHP SDK. https://github.com/modelcontextprotocol/php-sdk
 
 **External**
-23. Anand Komandooru, Steven DeVries and Haleh Najafzadeh, "MCP went stateless: is your AWS MCP server deployment Well-Architected?", AWS Architecture Blog, 2026-09-01. https://aws.amazon.com/blogs/architecture/mcp-went-stateless-is-your-aws-mcp-server-deployment-well-architected/
-24. `mcp-migrate`, community migration tool. https://github.com/dheerajjha/mcp-migrate
-25. Tianqi Zhang and colleagues, "How we built the Microsoft Learn MCP Server", Engineering@Microsoft, 2026-02-11. https://devblogs.microsoft.com/engineering-at-microsoft/how-we-built-the-microsoft-learn-mcp-server/
-26. Nicolás Padilla, "Exposed by Design: A Dynamic Security Assessment of Internet-Facing MCP Servers at Scale", arXiv:2608.00150. https://arxiv.org/abs/2608.00150
+27. Anand Komandooru, Steven DeVries and Haleh Najafzadeh, "MCP went stateless: is your AWS MCP server deployment Well-Architected?", AWS Architecture Blog, 2026-09-01. https://aws.amazon.com/blogs/architecture/mcp-went-stateless-is-your-aws-mcp-server-deployment-well-architected/
+28. `mcp-migrate`, community migration tool. https://github.com/dheerajjha/mcp-migrate
+29. Akash Sathish, "Sessions Are Dead. Now What Breaks?", MCP Dev Summit Toronto, session listing. https://events.linuxfoundation.org/mcp-dev-summit-toronto/program/schedule/?id=1287461
+30. Tianqi Zhang and colleagues, "How we built the Microsoft Learn MCP Server", Engineering@Microsoft, 2026-02-11. https://devblogs.microsoft.com/engineering-at-microsoft/how-we-built-the-microsoft-learn-mcp-server/
+31. Nicolás Padilla, "Exposed by Design: A Dynamic Security Assessment of Internet-Facing MCP Servers at Scale", arXiv:2608.00150, preprint. https://arxiv.org/abs/2608.00150
