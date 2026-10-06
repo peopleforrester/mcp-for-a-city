@@ -90,7 +90,7 @@ page:
 > resources or prompts.
 
 > API Management MCP server capabilities currently aren't supported in
-> [workspaces](workspaces-overview).
+> [workspaces](https://learn.microsoft.com/en-us/azure/api-management/workspaces-overview).
 
 The workspaces exclusion matters more than it looks. Workspaces are how large
 APIM estates delegate API ownership to federated teams. An organisation that

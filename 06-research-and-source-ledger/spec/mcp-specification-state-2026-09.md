@@ -52,7 +52,7 @@ Source: https://modelcontextprotocol.io/specification/versioning (verified 2026-
 
 Revisions may be marked **Draft**, **Current**, or **Final**.
 
-> The **current** protocol version is [**2026-07-28**](/specification/2026-07-28/).
+> The **current** protocol version is [**2026-07-28**](https://modelcontextprotocol.io/specification/2026-07-28/).
 
 ### 1.2 Every revision that exists
 

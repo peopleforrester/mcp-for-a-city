@@ -656,7 +656,8 @@ capability; the replacement is an ordinary argument. The cost is that the
 directory list now travels in the context window on every call that needs it,
 which is the general shape of the stateless trade. **[PRACTITIONER]** Artemii
 Amelin, 2026-09-01,
-https://dev.to/artem_a/mcp-2026-07-28-deleted-the-session-the-state-moved-into-your-context-window-1hde:
+https://dev.to/artem_a/mcp-2026-07-28-deleted-the-session-the-state-moved-into-your-context-window-1hde
+(the post has since been removed, and no archived copy was found on 2026-10-06):
 "Connection state has become context-window state. It costs tokens on every turn
 it survives".
 
