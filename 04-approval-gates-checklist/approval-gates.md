@@ -166,6 +166,6 @@ Sources:
 - [MintMCP, MCP server security and vetting](https://www.mintmcp.com/blog/mcp-server-security-vetting)
 - [SSOJet, 12 questions a CISO will ask about your MCP server](https://ssojet.com/blog/ciso-mcp-server-security-questions)
 
-## The one rule behind all six
+## Behind all six
 
-If you do not give them MCP servers, they build their own. Explain the no, or expect the alley.
+Say no when you must, and explain why. The worst thing you can do is say no with no reason and no path.
