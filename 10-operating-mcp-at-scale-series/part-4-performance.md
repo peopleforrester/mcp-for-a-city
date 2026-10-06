@@ -3,6 +3,7 @@ title: "Where an MCP Call Spends Its Time"
 subtitle: "Operating MCP at scale, part four: performance"
 date: 2026-10-05
 status: draft
+prefix: "Research"
 series: "Operating MCP at Scale"
 part: 4
 sources_verified_on: 2026-10-06

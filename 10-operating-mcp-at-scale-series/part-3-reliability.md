@@ -3,6 +3,7 @@ title: "Your Health Check Is Speaking a Different Protocol Version"
 subtitle: "Operating MCP at scale, part three: reliability"
 date: 2026-10-01
 status: draft
+prefix: "Research"
 series: "Operating MCP at Scale"
 part: 3
 sources_verified_on: 2026-10-05

@@ -3,6 +3,7 @@ title: "The Protocol Moved Under You and Nobody Migrates You"
 subtitle: "Operating MCP at scale, part one: operational excellence"
 date: 2026-09-21
 status: draft
+prefix: "Research"
 series: "Operating MCP at Scale"
 part: 1
 sources_verified_on: 2026-10-05
