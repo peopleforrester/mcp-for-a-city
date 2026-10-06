@@ -17,7 +17,7 @@ the part that argues it.
 | Part | Title | Status |
 |---|---|---|
 | 1 | [The Protocol Moved Under You and Nobody Migrates You](part-1-operational-excellence.md) | draft, under review |
-| 2 | [Nobody Vets MCP Servers, and Everyone Is Right About Why](part-2-security.md) | draft, under review |
+| 2 | [Everyone Vets MCP Servers Alone](part-2-security.md) | draft, under review |
 | 3 | [Your Health Check Is Speaking a Different Protocol Version](part-3-reliability.md) | draft, under review |
 | 4 | [Where an MCP Call Spends Its Time](part-4-performance.md) | draft, under review |
 | 5 | [The MCP Bill Is Hiding in the Token Bill](part-5-cost.md) | draft, under review |
