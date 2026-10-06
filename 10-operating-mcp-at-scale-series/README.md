@@ -16,11 +16,11 @@ the part that argues it.
 
 | Part | Title | Status |
 |---|---|---|
-| 1 | [The Protocol Moved Under You and Nobody Migrates You](part-1-operational-excellence.md) | draft, under review |
-| 2 | [Everyone Vets MCP Servers Alone](part-2-security.md) | draft, under review |
-| 3 | [Your Health Check Is Speaking a Different Protocol Version](part-3-reliability.md) | draft, under review |
-| 4 | [Where an MCP Call Spends Its Time](part-4-performance.md) | draft, under review |
-| 5 | [The MCP Bill Is Hiding in the Token Bill](part-5-cost.md) | draft, under review |
+| 1 | [Nothing Pages You: Which Side Moves First When an MCP Fleet Upgrades to 2026-07-28](part-1-operational-excellence.md) | draft |
+| 2 | [Something Peculiar in the Logs: How CVE-2026-47250 Turned an MCP Server Against Its Operator](part-2-security.md) | draft |
+| 3 | [The Server Was Fine: Why MCP Health Checks Keep Marking Working Servers Down](part-3-reliability.md) | draft |
+| 4 | [The Tool List Costs More Time Than the Gateway](part-4-performance.md) | draft |
+| 5 | [The MCP Cost Nobody Invoices: Tool Definitions Resent on Every Call](part-5-cost.md) | draft |
 | | [The enterprise checklist for 2026-07-28](operating-mcp-checklist.md) | draft, under review |
 
 Each part is published as a draft so the sources can be checked in the open.

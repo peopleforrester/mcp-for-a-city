@@ -1,256 +1,278 @@
 ---
-title: "Your Health Check Is Speaking a Different Protocol Version"
+title: "The Server Was Fine: Why MCP Health Checks Keep Marking Working Servers Down"
 subtitle: "Operating MCP at scale, part three: reliability"
 date: 2026-10-01
+revised: 2026-10-06
 status: draft
 prefix: "Research"
 series: "Operating MCP at Scale"
 part: 3
-sources_verified_on: 2026-10-05
+sources_verified_on: 2026-10-06
 ---
 
-# Your Health Check Is Speaking a Different Protocol Version
+# The Server Was Fine: Why MCP Health Checks Keep Marking Working Servers Down
 
 *Operating MCP at scale, part three: reliability.*
 
-Slack runs a production MCP server at `mcp.slack.com/mcp`. On 30 September the
-maintainer of an MCP client filed a bug against that client: Slack's server sat in
-"connecting" and never reached ready, although its 26 tools listed and answered
-calls.
+On September 30, 2026, Slack's production MCP server answered every tool call a
+client sent it, and the client still listed it as "connecting" [1]. The client's
+health check had asked the server for `ping`, the server had replied that it did
+not know that method, and the client had read the reply as a dead peer. That was
+one of five cases written up in September in which a health check looked at a
+working MCP server and marked it down, each on a different codebase [1][2][3][4][5].
+This article shows how it happens, why the probe that replaces `ping` has a trap
+of its own, and what a health check looks like when it has to survive a fleet
+that speaks two protocol revisions at once.
 
-The server was working. The client health-checked it with `ping`, Slack's server
-answered `-32601`, method not found, and the client read an answer as a dead
-peer.
+Let me start with the rule everyone was following.
 
-It is one instance of a failure class that has been written up at least five
-times in four weeks, and it will keep happening while servers and clients from
-two revisions share a fleet.
+## Clients were told to ping
 
-| Project | What happened |
-|---|---|
-| A client holding Slack's server in "connecting" | Production server answers `-32601` to `ping`; the client never marks it ready, though its 26 tools work |
-| A desktop-automation server restarted on a cycle | Server answers `-32601` to `ping`; clients that health-check with it "kill and restart the server every cycle", about 55 seconds observed |
-| A virtual-MCP health probe | Probes with HTTP GET; backends answering `405` or `400` per spec are excluded from tool routing, though `initialize`, `ping` and `tools/list` all work over POST |
-| A gateway registry health service | Skips `notifications/initialized`, so the following `ping` gets `404 Session not found` and a hosted Salesforce server is marked unhealthy with zero tools |
-| A gateway's own benchmark fixture | Fixture never implemented `ping`; the unreleased v4 probe opened the breaker and shed all its traffic about 30 seconds after start. Caught in a pre-release load test, fixed the next day |
+Three parties meet on every one of these connections: a client or gateway built
+to an older revision of the specification, a server that does not serve `ping`,
+and the specification itself, which changed its mind between them.
 
-Five instances, three different root causes, one shape: **a health check reading a
-server that answered as one that failed, and marking a working server down.**
+The 2025-11-25 revision was explicit. A receiver "MUST respond promptly with an
+empty response," implementations "SHOULD periodically issue pings to detect
+connection health," and "Multiple failed pings MAY trigger connection reset" [6].
+A client that pings every ten seconds and resets after three failures is following
+that text to the letter.
 
-## Why it keeps happening
+On a normal day that loop is invisible. The exchange is one line each way:
 
-`ping` was removed from the protocol in the 2026-07-28 revision, alongside
-`logging/setLevel` and `notifications/roots/list_changed`.
+```
+→ {"jsonrpc":"2.0","id":2,"method":"ping"}
+← {"jsonrpc":"2.0","id":2,"result":{}}
+```
 
-The important part is what the previous revision said. Under 2025-11-25 a
-receiver "MUST respond promptly with an empty response," implementations
-"SHOULD periodically issue pings to detect connection health," and "Multiple
-failed pings MAY trigger connection reset."
+The server is marked ready, tools route to it, and nobody thinks about the probe
+again until a server truly stops answering.
 
-So a client that pings every ten seconds and resets after three failures is not
-badly written. **It is doing what the previous revision told it to do.** The
-servers that refuse `ping` behave the way the current revision allows, where an
-unknown method gets `-32601` (on Streamable HTTP, a `404` carrying it), even when,
-like Slack's, they negotiated an older revision that still requires an answer.
+Then the 2026-07-28 revision removed `ping`, along with `logging/setLevel` and
+`notifications/roots/list_changed` [7]. A server on the current revision answers
+an unknown method with `-32601`, method not found, and on Streamable HTTP with a
+`404` carrying that code [8]. Some servers send that reply even when they
+negotiated an older revision that still requires `ping` [1]. Clients written to
+the old rule kept pinging, and a refusal reads to them like a failure.
 
-That is the shape of the three `ping` rows in the table: the rules of two
-revisions meeting on one connection.
+## Five working servers, marked down
 
-The maintainers explain the removal in SEP-2575, and the reasoning is sound:
+**Slack.** The client was `penelope`, and its maintainer was validating Slack's
+hosted server, which had negotiated protocol 2025-06-18 [1]. The client's own
+test command passed: 26 tools listed and six real calls succeeded. Its server
+list still showed Slack as `connecting`, with an error ending "Method not found:
+ping." Its diagnostic command raised a warning and suggested reading the
+logs and restarting the server, which changed nothing, because nothing was
+broken. The maintainer filed the issue and closed it the same afternoon [1].
+
+**A desktop-automation server.** `cua-driver` 0.22.0 on Windows answered the
+same probe like this [2]:
+
+```
+→ {"jsonrpc":"2.0","id":2,"method":"ping"}
+← {"jsonrpc":"2.0","id":2,"error":{"code":-32601,"message":"Unknown method: ping"}}
+```
+
+A gateway hosting it as a stdio child counted every reply as a failure and
+restarted it on a cycle of 53 to 57 seconds: 131 and 132 disconnects in two hours
+on two hosts, with windows in which clients saw zero tools [2]. With no pings
+sent, the same process ran for 84 seconds without exiting. The workaround was to
+tell the gateway not to ping, and the reporter named its cost: slower detection
+of children that really are dead [2]. Here the server was the one out of line,
+and the reporter asked it to implement `ping`. The outcome was the same. A server
+that could do all of its work was taken offline roughly once a minute over the
+one method it did not serve.
+
+**A gateway's own test backend.** The clearest record comes from a gateway
+project that caught the failure in its own load test before release [5]. Its
+next major version probed every backend with `ping` every ten seconds and
+escalated on the third refusal. Its benchmark fixture had never implemented
+`ping`. The log reads:
+
+```
+11:45:20  Health probe was not served  method="ping" code=-32601 consecutive=1
+11:45:30  Health probe was not served  method="ping" code=-32601 consecutive=2
+11:45:40  record_failure{reason="health probe unserved"} failures=1..5 threshold=5
+11:45:40  Circuit breaker opened backend=workload reason=health probe unserved
+11:45:40  Circuit open, rejecting request
+```
+
+About thirty seconds after start, the breaker opened and the backend shed all of
+its traffic. The breaker rebuilt the transport, and the rebuilt process still did
+not serve `ping`, so the cycle repeated. Under a 60-second load with 50 virtual
+users, `tools/call` succeeded 48.7% of the time against 100% on the previous
+release, with 0.00% HTTP errors: every failure was an HTTP 200 carrying a
+JSON-RPC error [5]. An alert built on HTTP error rates would have stayed quiet.
+The project fixed it the next day by treating `-32601` as proof of life [5].
+
+**Two more, with other causes.** A virtual-MCP layer probed its backends with
+HTTP GET, which Streamable HTTP makes optional. The report's example was
+Tableau's MCP server, which accepts POST only. A backend answering `405` or `400`,
+as the transport allows, was excluded from tool routing while `initialize`,
+`ping` and `tools/list` all worked over POST [3]. A gateway
+registry's health service skipped `notifications/initialized`, so its next `ping`
+got `404 Session not found`, and a hosted Salesforce server was marked unhealthy
+with zero tools [4].
+
+That is three different root causes and one shape. In every case a server
+answered, the answer was a JSON-RPC error in three cases and an HTTP status in
+two, and the health check treated an answer as an absence.
+
+## Any reply proves the server is alive
+
+The maintainers explained the removal of `ping` in SEP-2575:
 
 > "Client-to-server ping is also removed because any normal RPC call already
 > proves server liveness, and transport-layer mechanisms (HTTP keep-alives, SSE
 > comments, STDIO process status) handle connection-health checks more
-> appropriately."
+> appropriately." [9]
 
-That is true, and two rows in the table have nothing to do with the revision: a
-GET probe the transport makes optional, and a skipped lifecycle step. The class
-does not depend on the removal. The removal enlarged it.
+That reasoning holds, and it is also the fix. A server that sends back `-32601`
+has received the request, parsed it, and written a reply. Only silence, a refused
+connection or a timeout says otherwise.
 
-## The new probe has an edge the changelog does not mention
+The removal did not create this failure class, since two of the five cases have
+nothing to do with `ping`. It did enlarge it, and it will stay enlarged for as
+long as clients and servers from two revisions share a fleet.
 
-`server/discover` is the replacement and it is better for readiness than a ping
-ever was. It is a mandatory RPC returning supported protocol versions,
-capabilities and identity in one call, which tells you the peer is alive **and**
-which era it speaks. In a mixed fleet that second half is the question you
-actually have.
+## The replacement probe can be answered from a cache for an hour
 
-But it is a capability read where `ping` was a no-op, and capability reads are cacheable.
+`server/discover` takes over from `ping`, and for readiness it is better. It is a
+mandatory call that returns supported protocol versions, capabilities and
+identity, so one request tells you the peer is alive and which revision it
+speaks [10]. In a mixed fleet the second answer is the one you need.
 
-The caching page lists `server/discover` first among the results on which
-"Servers MUST include caching hints." The `server/discover` page's own example
-response carries `"ttlMs": 3600000, "cacheScope": "public"`. And the scope table
+It is also a capability read, and capability reads are cacheable. The caching
+page lists `server/discover` first among the results on which "Servers MUST
+include caching hints" [11]. The `server/discover` page's own example response
+carries `"ttlMs": 3600000, "cacheScope": "public"` [10], and the caching page
 defines a public response as one that "Any client, shared gateway, or caching
-proxy MAY store and serve the cached response to any user."
+proxy MAY store and serve the cached response to any user" [11].
 
-Read those three together. **A shared gateway may answer your liveness probe out
-of a cache with an hour's freshness, without the backend being involved at all.**
+Put those three lines together and a shared gateway may answer your liveness
+probe from its cache for an hour without the backend being involved. The
+changelog's list of cacheable results omits `server/discover` [7], so a team that
+reads only the changelog will not see it. If you own the server, return
+`ttlMs: 0`, which the caching page says "SHOULD be considered immediately stale"
+[11]. If you do not, probe the backend directly.
 
-Check the changelog and you will not find this: its list of cacheable results
-omits `server/discover`. The two specification pages are where it lives. If you
-are designing a health check on top of `server/discover`, that is the detail
-that decides whether it measures anything.
+## Nothing upstream will catch it for you
 
-## What gateways actually ship, stated precisely
+Each implementer in those five cases wrote its own health rule, because there
+was no current one to copy. The official client best-practices page carries no
+guidance on health checks, timeouts, retries or reconnection [12].
 
-It is tempting to say the ecosystem has not built resilience. That is wrong, and
-a maintainer will produce the code in about a minute.
+The gateways have built more resilience than their reputation suggests, and the
+gap is in the defaults. ContextForge has had exponential backoff with jitter in
+tree since July 2025, wired into its gateway and tool services [13]. Its health
+checker flips a `reachable` flag, and the next passing probe brings a backend
+back on its own; only a gateway an operator disabled by hand stays down [14]. Its
+per-tool circuit breaker, with a half-open trial request, exists as a plugin and
+ships with `mode: "disabled"` in the default configuration [15]. Install it and
+change nothing, and you get retry and recovery with no breaker.
 
-**ContextForge ships retry with backoff and automatic recovery.** Its
-`retry_manager.py` implements exponential backoff with jitter and has been in
-tree since July 2025, wired into both the gateway and tool services. Its health
-checker flips a `reachable` flag rather than disabling anything, and the next
-passing probe reactivates the backend on its own. Only a gateway an operator
-disabled by hand stays down.
+Nor will anyone you depend on hand you an availability number to alert against.
+The MCP Registry working group lists "Registry uptime ≥ 99.9% with automated
+monitoring and alerting" among its success criteria [16], while the registry's
+terms of service disclaim any guarantee [17], so that is an objective. TrueFoundry's
+SLA commits to 99.9% and names "MCP control surfaces" [18], and MintMCP's status
+page shows an "MCP Gateway" component with a ninety-day uptime bar [19]. Azure API
+Management documents its MCP feature with no MCP-specific availability commitment
+[20]. The hosted servers in your critical path show a status light and no number,
+so the objective is yours to set.
 
-The narrower and true claim is about defaults. Its per-tool, three-state circuit
-breaker, with a half-open trial request, exists as a plugin and **ships with
-`mode: "disabled"`** in the default plugin configuration. So a team that installs
-ContextForge and changes nothing gets retry and reactivation, and does not get a
-breaker unless it goes looking.
+## What to do, depending on who you are
 
-The gap worth naming is elsewhere and it is a project-level one. The official
-client best-practices page carries **no guidance at all** on health checks,
-timeouts, retries or reconnection. Every implementer in that table was working
-without current guidance.
+Here is the whole argument as a probe specification you can check line by line
+against the sources:
 
-## Session startup is what trips your rate limits
+```yaml
+# MCP backend health probe, for a fleet that mixes 2025-11-25 and 2026-07-28 peers
+probe:
+  method: server/discover          # replaces ping; also reports the revision spoken [10]
+  path: direct-to-backend          # never through a shared gateway or caching proxy [11]
+  alive_if: any_response           # a JSON-RPC error or HTTP status is still an answer [9]
+  treat_as_alive:
+    - jsonrpc_error: -32601        # unknown method, the current-revision refusal of ping [8]
+    - http_status: 404             # Streamable HTTP carrying -32601 [8]
+  dead_only_if:
+    - connect_failure
+    - timeout
+server_side:
+  server_discover_ttl_ms: 0        # "SHOULD be considered immediately stale" [11]
+alerting:
+  objective: 0.999                 # yours; hosted servers publish none [20]
+  page: [{window: 1h, short: 5m, burn: 14.4}, {window: 6h, short: 30m, burn: 6}]
+  ticket: [{window: 3d, short: 6h, burn: 1}]   # Google SRE Workbook Table 5-8 [21]
+```
 
-The usual mental model says tool calls generate load. The measured evidence puts
-the first failure somewhere else entirely.
+**If you write an MCP client or gateway,** stop health-checking with `ping` and
+count any reply as proof of life. The gateway in the third case fixed its own
+bug in a day by doing exactly that [5]. Any probe that still counts `-32601` as a
+failure will mark down the next working server that declines.
 
-One deployment made 2,021 downstream connections across 90 session startups,
-about 22.5 per session, and collected 69 HTTP 429s from a provider that was
-serving **zero tools** at the time. Those rejections came from session-start
-connects and tool-list loads, before any tool was invoked.
+**If you operate a platform,** check your gateway's defaults before its feature
+list, because the breaker you are counting on may ship disabled [15]. Alert on
+JSON-RPC errors as well as HTTP status, since the third case lost half its tool
+calls behind a clean HTTP error rate [5]. Set your own objective at the MCP
+boundary and use the burn rates above, which come from Google's SRE Workbook for
+a 99.9% objective [21].
 
-That measurement comes from one client-side aggregator on one machine, so treat
-the ratio as an existence proof rather than a benchmark. The design conclusion
-survives the caveat: if you throttle tool invocation and not session
-establishment, you are throttling the thing that was not the problem.
+**If you run an MCP server,** return `ttlMs: 0` on `server/discover` so no
+intermediary can answer a probe in your place, and serve every method your
+negotiated revision still requires. Slack's server negotiated a revision that
+requires `ping` and refused it [1].
 
-## The SLO picture is not empty, it is misaligned
+## What is still unsolved
 
-I expected to find nothing here. That was wrong, and the real picture is more
-useful.
+The protocol has no shared answer to "is this server healthy." The specification
+removed the old probe for a sound reason, the client best-practices page says
+nothing about health checks [12], and the replacement probe is cacheable by
+default. Until that page carries guidance, every client and gateway will keep
+writing its own rule, and the September list will keep growing.
 
-**The MCP Registry working group publishes a numeric target.** Its charter lists
-under success criteria "Registry uptime ≥ 99.9% with automated monitoring and
-alerting," and scopes the group to uptime, monitoring and incident response. The
-terms of service disclaim any guarantee, which makes it an objective rather than
-an agreement, and that is exactly what an objective is. The same charter still
-shows its uptime and monitoring automation as planned.
+The limit of this article is that its evidence is five issue reports, most of
+them filed by the people who found and fixed the bug. I know of no published
+measurement of how many MCP deployments probe with `ping` today, and no
+post-mortem of a production outage caused by one. The five cases show the
+mechanism; they cannot tell you how often it is costing anyone traffic.
 
-**At least one gateway vendor names MCP inside an availability commitment.**
-TrueFoundry's SLA commits to 99.9% and lists "MCP control surfaces" among covered
-components. MintMCP's status page carries a component called "MCP Gateway" with a
-ninety-day uptime bar.
+## What it adds up to
 
-What is genuinely missing is narrower and more interesting: **the large
-first-party hosted MCP servers publish status components without numbers.**
-Cloudflare, Notion, Zapier, Figma and Atlassian Rovo each list an MCP component
-on a public status page and attach no availability figure to it. Azure API
-Management documents its MCP feature with no MCP-specific availability
-commitment.
-
-So the commitments that exist come from the registry and from gateway vendors.
-The servers most enterprises actually depend on expose a status light and no
-number.
-
-One warning if you go looking for targets. The one framework I found that
-addresses MCP SLOs directly, Digital Applied's of 15 May 2026, is content
-marketing, attributes its latency distribution to its own unpublished production
-observability, and **misquotes Google's burn-rate table**, presenting 6x as a
-ticketing threshold. In the SRE Workbook, for a 99.9%
-objective, 6x is a page:
-
-| Severity | Long window | Short window | Burn rate | Budget consumed |
-|---|---|---|---|---|
-| Page | 1 hour | 5 minutes | 14.4 | 2% |
-| Page | 6 hours | 30 minutes | 6 | 5% |
-| Ticket | 3 days | 6 hours | 1 | 10% |
-
-Cite Google directly. The table is free and correct.
-
-## What to actually do
-
-**Do not health-check with `ping`.** It does not exist in the current revision,
-and production servers already refuse it, Slack's among them. Three rows in that
-table are that refusal counted as a failure. One gateway caught it in its own
-pre-release load test and fixed it the next day by treating `-32601` as proof of
-life. Any client or gateway that still counts it as a failure will mark down the
-first working server that declines.
-
-**If you probe with `server/discover`, make sure your probe cannot be served from
-cache.** Its example response ships an hour of public freshness. If you own the
-server, return `ttlMs: 0`, which the caching page says SHOULD be treated as
-immediately stale. If you do not, probe the backend directly. A probe a proxy can
-answer is not a liveness check.
-
-**Treat a protocol error as an answer, not a failure.** Every incident in that
-table came from reading a response as a dead peer: a JSON-RPC error in three, an
-HTTP status in two. A response proves
-liveness whatever its content, which is the maintainers' own argument for
-removing the ping in the first place.
-
-**Check your gateway's defaults, not its features.** The resilience you want may
-be present and switched off. In ContextForge, retry and reactivation are on and
-the circuit breaker is not.
-
-**Throttle session establishment, not just tool calls.** That is where the
-measured rate limiting happened.
-
-**Set your own objective at the MCP boundary.** The registry publishes one for
-itself and some gateway vendors name MCP in an SLA, but the hosted servers you
-depend on almost certainly do not, so an end-to-end number you did not define
-measures something nobody has promised you.
+In each of the five cases the server was fine and the check was wrong. The
+revision removed `ping`, production servers answer it with an error, and any
+answer at all proves the server is alive. Treat it that way, make sure the probe
+that replaced `ping` cannot be answered from a cache, and read your gateway's
+defaults before you rely on its features.
 
 ---
 
-*Part three of five on operating MCP at scale. Parts one and two cover
-operational excellence and security. Parts four and five, on performance and
-cost, follow.*
-
-*AWS published an architecture view of this revision on 1 September, reaching
-several of the same conclusions from the platform side and assuming their
-services throughout. It is worth reading alongside this.*
+*Part three of five on operating MCP at scale. Parts one and two cover upgrading
+a fleet to the 2026-07-28 revision and security; parts four and five cover
+performance and cost.*
 
 ## Sources
 
-All URLs verified 2026-10-05.
+All URLs verified 2026-10-05; issue reports [1], [2], [3] and [5] re-read on 2026-10-06.
 
-**Specification**
-1. Changelog 2026-07-28, for the removal of `ping`. https://modelcontextprotocol.io/specification/2026-07-28/changelog
-2. Caching, for the cacheable-results list and the scope table. https://modelcontextprotocol.io/specification/2026-07-28/server/utilities/caching
-3. `server/discover`, for the example response carrying `ttlMs` and `cacheScope`. https://modelcontextprotocol.io/specification/2026-07-28/server/discover
-4. Ping, revision 2025-11-25, for the periodic-ping recommendation and connection reset. https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/ping
-5. Client best practices, which carries no health check, timeout, retry or reconnection guidance. https://modelcontextprotocol.io/docs/2026-07-28/develop/clients/client-best-practices
-6. Streamable HTTP, for the `404` carrying `-32601` on an unknown method. https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http
-7. SEP-2575, Make MCP Stateless, for the rationale behind removing `ping`. https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/seps/2575-stateless-mcp.md
-
-**The failure class**
-8. `edouard-claude/penelope` #276, Slack's production server held in "connecting", protocol 2025-06-18. https://github.com/edouard-claude/penelope/issues/276
-9. `trycua/cua` #4001, a server killed and restarted on a cycle. https://github.com/trycua/cua/issues/4001
-10. `stacklok/toolhive` #6497, GET probes excluding conformant backends. https://github.com/stacklok/toolhive/issues/6497
-11. `agentic-community/mcp-gateway-registry` #1817, the skipped initialization and the unhealthy Salesforce server. https://github.com/agentic-community/mcp-gateway-registry/issues/1817
-12. `MikkoParkkola/mcp-gateway` #567, the benchmark fixture, and PR #576, the fix merged 2026-09-19. https://github.com/MikkoParkkola/mcp-gateway/issues/567 and https://github.com/MikkoParkkola/mcp-gateway/pull/576
-
-**Gateway implementation**
+1. `edouard-claude/penelope` #276, Slack's production server held in "connecting", protocol 2025-06-18. https://github.com/edouard-claude/penelope/issues/276
+2. `trycua/cua` #4001, a server killed and restarted on a cycle. https://github.com/trycua/cua/issues/4001
+3. `stacklok/toolhive` #6497, GET probes excluding conformant backends. https://github.com/stacklok/toolhive/issues/6497
+4. `agentic-community/mcp-gateway-registry` #1817, the skipped initialization and the unhealthy Salesforce server. https://github.com/agentic-community/mcp-gateway-registry/issues/1817
+5. `MikkoParkkola/mcp-gateway` #567, the benchmark fixture, and PR #576, the fix merged 2026-09-19. https://github.com/MikkoParkkola/mcp-gateway/issues/567 and https://github.com/MikkoParkkola/mcp-gateway/pull/576
+6. Ping, revision 2025-11-25, for the periodic-ping recommendation and connection reset. https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/ping
+7. Changelog 2026-07-28, for the removal of `ping` and the list of cacheable results. https://modelcontextprotocol.io/specification/2026-07-28/changelog
+8. Streamable HTTP, for the `404` carrying `-32601` on an unknown method. https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http
+9. SEP-2575, Make MCP Stateless, for the rationale behind removing `ping`. https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/seps/2575-stateless-mcp.md
+10. `server/discover`, for the method and the example response carrying `ttlMs` and `cacheScope`. https://modelcontextprotocol.io/specification/2026-07-28/server/discover
+11. Caching, for the cacheable-results list, the scope table and `ttlMs: 0`. https://modelcontextprotocol.io/specification/2026-07-28/server/utilities/caching
+12. Client best practices, which carries no health check, timeout, retry or reconnection guidance. https://modelcontextprotocol.io/docs/2026-07-28/develop/clients/client-best-practices
 13. ContextForge retry manager, exponential backoff with jitter. https://github.com/IBM/mcp-context-forge/blob/main/mcpgateway/utils/retry_manager.py
-14. ContextForge ADR-0009 on built-in health checks and automatic reactivation. https://github.com/IBM/mcp-context-forge/blob/main/docs/docs/architecture/adr/009-built-in-health-checks.md
+14. ContextForge ADR-0009, built-in health checks and automatic reactivation. https://github.com/IBM/mcp-context-forge/blob/main/docs/docs/architecture/adr/009-built-in-health-checks.md
 15. ContextForge circuit-breaker plugin, and the default plugin configuration that ships it disabled. https://github.com/IBM/mcp-context-forge/tree/main/plugins/circuit_breaker and https://github.com/IBM/mcp-context-forge/blob/main/plugins/config.yaml
-
-**Objectives**
 16. MCP Registry working group charter, the 99.9% success criterion. https://modelcontextprotocol.io/community/working-groups/registry
 17. MCP Registry terms of service, which disclaim any guarantee of availability. https://modelcontextprotocol.io/registry/terms-of-service
 18. TrueFoundry service level agreement, naming MCP control surfaces. https://www.truefoundry.com/service-level-agreement
 19. MintMCP status page, MCP Gateway component. https://status.mintmcp.com/
 20. Azure API Management, overview of MCP servers. https://learn.microsoft.com/en-us/azure/api-management/mcp-server-overview
 21. Google SRE Workbook, alerting on SLOs, Table 5-8. https://sre.google/workbook/alerting-on-slos/
-22. Digital Applied, "MCP Server Reliability Metrics", 2026-05-15, the framework that labels 6x a ticket. https://www.digitalapplied.com/blog/mcp-server-reliability-metrics-slo-design-framework-2026
-
-**Session startup**
-24. `btsouth/toolport` #874, 2,021 connects across 90 session startups and 69 HTTP 429s from a provider serving zero tools. https://github.com/btsouth/toolport/issues/874
-
-**Prior art**
-23. Komandooru, DeVries and Najafzadeh, "MCP went stateless: is your AWS MCP server deployment Well-Architected?", 2026-09-01. https://aws.amazon.com/blogs/architecture/mcp-went-stateless-is-your-aws-mcp-server-deployment-well-architected/

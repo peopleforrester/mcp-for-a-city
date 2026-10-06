@@ -1,7 +1,8 @@
 ---
-title: "Where an MCP Call Spends Its Time"
+title: "The Tool List Costs More Time Than the Gateway"
 subtitle: "Operating MCP at scale, part four: performance"
 date: 2026-10-05
+revised: 2026-10-06
 status: draft
 prefix: "Research"
 series: "Operating MCP at Scale"
@@ -9,306 +10,229 @@ part: 4
 sources_verified_on: 2026-10-06
 ---
 
-# Where an MCP Call Spends Its Time
+# The Tool List Costs More Time Than the Gateway
 
 *Operating MCP at scale, part four: performance.*
 
-The one peer-reviewed study I found that instruments an MCP workflow end to end
-puts the time somewhere other than the tool. ProMCP, published in Findings of ACL
-2026, splits the path from a user's query to the final answer into six stages
-across 20 servers and 169 tools. With customized clients, 60 to 67% of total
-latency went to "LLM planning and schema injection," and in every configuration
-"tool execution contributes only a small fraction of the overall cost."
+GitHub cut the default built-in toolset for Copilot in VS Code from 40 tools to
+13, and the answers came back faster: an average of 190 ms off the time to first
+token and 400 ms off the time to the complete response [1]. The change touched
+the list the model reads at the start of a turn, and nothing in the network path.
+That is the claim this article will prove. In an MCP agent, the tool list costs
+more time than the gateway most teams worry about, and the list is the part of
+the request an operator controls least.
 
-GitHub trimmed the default built-in toolset in VS Code from 40 tools to 13 and
-reports that "users with the shrunken toolset experience an average decrease of
-190 milliseconds in TTFT (Time To First Token), and an average decrease of 400
-milliseconds in TTFT (Time to Final Token, or time to complete model response)."
-The post uses one acronym for two quantities, so quote it exactly or not at all.
-Against that, AIMultiple measured three self-hosted MCP gateways adding 840
-microseconds (Bifrost), 1,134 (Docker MCP Gateway) and 23,058 (IBM ContextForge)
-per call.
+Here is how it plays out on a team that has not noticed yet. The team is
+hypothetical. Every number attached to it is measured, and cited.
 
-That supports a conditional thesis. **When the gateway is self-hosted and nearby,
-the tool surface the model reads and plans over costs more time than the hop to
-the tool. When the gateway inspects content or sits across a region, the two are
-the same order of magnitude.** Each half rests on measurements, taken in
-different studies, and the rest of this part is about the conditions.
+## Who is in the request path
 
-## Where the time goes
+Six things sit between a user's question and the answer, and only one of them
+gets its own dashboard.
 
-| Segment | Figure | Who measured it | Label |
-|---|---|---|---|
-| Self-hosted gateway | Bifrost 840 µs (ships no content inspection); Docker MCP Gateway 1,134 µs (credential blocking on by default); ContextForge 23,058 µs | AIMultiple: median added latency at concurrency 1, routed call minus a matched direct call, one 8-vCPU box | Measured, independent |
-| Content inspection, off then on | ContextForge pattern detectors 27.8 to 31.0 ms (+3,198 µs); TrueFoundry guardrails 55.5 to 172.1 ms (+116.6 ms) | AIMultiple, one setting changed per pair | Measured, independent |
-| Hosted control plane | TrueFoundry 55.5 ms, of which the round trip is 14.1; Cortx 211.1 ms, of which roughly 200 is two network crossings | AIMultiple, over the WAN from the same box | Measured, independent, includes network |
-| Server at 50 virtual users | p95 of 8.13 ms (Quarkus) to 342.41 ms (Python, at its 259 requests per second ceiling) | TM Dev Lab, k6, 2 vCPU per server, 2025-06-18 protocol | Measured, independent |
-| Planning and schema injection | 60 to 67% of total latency with customized clients | ProMCP, 20 servers, 169 tools | Measured, peer-reviewed |
-| One inference round trip | "hundreds of milliseconds to seconds" | Anthropic | Claimed by a model vendor, no method |
+| Part | What it costs | Who decides |
+|---|---|---|
+| The model | Planning over the tool list: 60 to 67% of total latency with customized clients in one end-to-end study [2] | The model vendor, and whoever chooses what the model is sent |
+| The tool list | 58 tools and about 55K tokens in Anthropic's five-server example [3] | Each server's author, who can change it at runtime |
+| The prompt cache | Lost entirely when any tool definition changes [4] | Whoever changed the list last |
+| The gateway | 840 µs (Bifrost) or 1,134 µs (Docker MCP Gateway) added per call, self-hosted [5] | The platform team |
+| The server | p95 from 8.13 ms to 342.41 ms at 50 virtual users, depending on the implementation [6] | The server's author |
+| The tool's own work | "only a small fraction of the overall cost" [2] | The system behind the tool |
 
-AIMultiple treats only the three self-hosted figures as comparable with each
-other; the hosted pair carries network distance it could not separate from
-processing. The planning row is the largest where it has a number. Three other
-rows can reach its size: injection detection, a control plane in another region,
-and a server at its ceiling. Python's p95 was taken while it served its maximum
-of 259 requests per second, so I read most of it as queueing.
+The platform team owns one row, and it is the cheapest one.
 
-## What is MCP-specific about the surface
+## Monday, the agent is fast
 
-The cost of a large tool surface belongs to tool-calling agents in general.
-Native function calling with no MCP reads the same kind of definitions, and
-GitHub's trim was of built-in tools, though the post notes that with MCP servers
-the count "can grow into the hundreds." There is also a counter-case, from a
-vendor measuring its own server. Twilio ran the Cline agent on Claude 3.7 Sonnet
-over three tasks, each at least ten times, against a control that used built-in
-tools such as the terminal and web search. With MCP, "Tasks completed ~20.5%
-faster on average," and "Cost increased by about 27.5% on average."
+Imagine an internal agent connected to five MCP servers, the shape of Anthropic's
+worked example: "58 tools consuming approximately 55K tokens before the
+conversation even starts" [3]. A user asks a question. The client sends the tool
+definitions first, as it does every turn, and the provider finds them in the
+prompt cache, because Anthropic's caching puts tools first in the hierarchy [4].
+The model plans over a prefix it has already processed, picks a tool, and the
+call passes through the team's self-hosted gateway, one like Bifrost or Docker's,
+which AIMultiple measured at about a millisecond added per call [5]. The server answers. The model writes the reply.
 
-What MCP adds is that the operator does not own the surface. A third party
-writes the definitions, chooses their number, wording and order, and can change
-them at runtime with a `listChanged` notification. That matters because of
-prompt caching. Anthropic's caching documentation says the cache follows the
-hierarchy `tools`, `system`, `messages`, and that "Modifying tool definitions
-(names, descriptions, parameters) invalidates the entire cache." With caching
-on, a large surface costs most on a cache miss, and a surface someone else
-controls decides how often the miss happens.
+The team argued for weeks about that gateway before they deployed it. On Monday its
+panel is green, and so is everything else.
 
-The surfaces are large. Anthropic's worked example, introduced with "Consider a
-five-server setup," comes to "58 tools consuming approximately 55K tokens before
-the conversation even starts." Of its own systems it says "we've seen tool
-definitions consume 134K tokens before optimization."
+## Tuesday, after someone else's release
 
-Selection quality degrades with the same surface, and the published thresholds
-disagree. Anthropic's tool search documentation says Claude's ability to pick the
-right tool degrades past 30 to 50 tools. OpenAI's guide says to aim for "fewer
-than 20 functions available at the start of a turn at any one time, though this
-is just a soft suggestion." The RAG-MCP preprint points the same way on a
-different unit, reporting success above 90% for "MCP positions below 30," where a
-position is a server schema.
+Overnight, the author of one of the five servers ships a release. It adds a few
+tools, and it builds its tool list from a map with no fixed order. The client
+gets a `listChanged` notification and fetches the new list.
 
-## Deferring the surface, and what the hop costs
+Anthropic's caching documentation is blunt about what happens next: "Modifying
+tool definitions (names, descriptions, parameters) invalidates the entire cache"
+[4]. The first turn after the update starts cold. Because the new server can
+return its tools in a different order on the next call, so can the turn after
+that. The model is now planning over a list it has not seen, every time, and the
+list is longer than Anthropic's own guidance on selection quality, which puts the
+threshold at 30 to 50 tools [7]. OpenAI's guide aims lower, at "fewer than 20
+functions available at the start of a turn" [8].
 
-Both vendors document deferred loading on the pages quoted above. On Anthropic's
-API a deferred tool found through tool search is expanded inline, and "The
-prefix is untouched, so prompt caching is preserved"; for MCP servers it is set
-"once on the `mcp_toolset` entry's `default_config` for the whole server."
-OpenAI's guide says "you can defer loading some or all of those tools with
-`tool_search`," and that only gpt-5.4 and later models support it.
+Users say the agent feels slow. The team opens the gateway panel, because the
+gateway is the new component and the one they argued about. The panel shows what
+it showed yesterday: the gateway's added latency sitting in the lowest bucket.
+That is all it can show. The OpenTelemetry MCP conventions set histogram buckets
+starting at 0.01 s [9], so Bifrost's and Docker's added latency both land in the
+first bucket, and the default metrics cannot tell a fast gateway from a slow one.
 
-Deferral trades the surface for a discovery hop, and GitHub names the price:
-"each call to a virtual tool still results in a cache miss, an extra round trip,
-and an opportunity for a small percentage of agent operations to fail." The hop
-grows with the catalog. One preprint reports "sub-100ms retrieval latency" over
-121 tools. A PayPal preprint with an overlapping author measured production
-`tool_search` over 2,000 tools at an average of 572 ms, "median: 440 ms, P95: 936
-ms," across 1,921 requests in 24 hours. That is a vendor measuring its own
-system, and its figure caption reports a different sample. At that size the
-median hop matches GitHub's whole 400 ms saving, so deferral moves the cost to
-the turns that search.
+Nobody on the team changed anything. The cost arrived inside a list written by a
+third party, through a notification the protocol allows at any time, and it
+landed on the one row of the cast table no dashboard watches.
 
-## What the cache can and cannot hold
+## Planning over the tool list is the largest measured cost
 
-The 2026-07-28 revision requires `ttlMs` and `cacheScope` on every complete
-`tools/list`, `prompts/list`, `resources/list`, `resources/templates/list` and
-`resources/read` result, and the caching page adds `server/discover`. Ordering
-also reaches the model's prompt cache. The tools page says servers "SHOULD return
-tools in a deterministic order," because ordering "improves LLM prompt cache hit
-rates when tools are included in model context."
+ProMCP, published in Findings of ACL 2026, is a peer-reviewed study that
+instruments an MCP workflow end to end. It splits the path from query to answer
+into six stages across 20 servers and 169 tools. With customized clients, 60 to
+67% of total latency went to "LLM planning and schema injection," and "tool
+execution contributes only a small fraction of the overall cost" [2].
 
-The verb matters. AWS's Well-Architected post says tool lists "now return in
-deterministic order," and Cloudflare's says "Tool catalogs are deterministically
-ordered." The specification makes it a SHOULD. A server that builds its list from
-an unordered map is conformant and can reorder it between calls, which misses the
-prompt cache. The official Go SDK iterates its tools "sorted by unique ID." A
-gateway that merges several upstream lists has to make the same choice.
+The gateway figures come from a separate, independent benchmark. AIMultiple
+measured the added latency as the routed call minus the direct call, median at
+concurrency 1, on one 8-vCPU host: 840 µs for Bifrost, 1,134 µs for Docker MCP
+Gateway and 23,058 µs for ContextForge [5]. The planning stage is the largest
+cost wherever it has a number.
 
-Per-user filtering meets the scope rules next. The tools page allows a server to
-return "only the tools the caller's granted scopes permit," and the caching page
-says `"private"` is appropriate "for filtered list results that vary per user."
-Private caches "MUST NOT be shared across authorization contexts," and a
-different access token is a different context.
+Two configurations change that, and both are measured. Turning on content
+inspection, the check for injected instructions, cost 3.2 ms with ContextForge's
+detectors and took TrueFoundry from 55.5 ms to 172.1 ms, about 117 ms more per
+call [5]. A hosted control plane in another region adds network: Cortx measured
+211.1 ms, about 200 ms of it network [5]. In those two cases the gateway costs
+time of the same order as the tool list, and part two of this series argues for
+paying the inspection cost on traffic from servers you did not write.
 
-Gateways already cache upstream and filter on the way out. ContextForge's default
-`cache` mode serves `tools/list` from its own database through a visibility
-filter taken from the user context. Sigilum documents a 300-second discovery
-cache that returns tools "filtered by subject policy." Neither takes its
-freshness from the upstream `ttlMs`, in the code and documentation I read.
-Kuadrant's `mcp-gateway` does, and its code shows what aggregation does to the
-hints. The merged list gets the shortest upstream TTL and is `"private"` if any
-upstream is private or user-specific. If any upstream returns a TTL of zero, the
-whole merged list gets zero and is marked private. One volatile server sets the
-cacheability of everything federated with it.
+A server running at its ceiling can also reach that size. In TM Dev Lab's
+benchmark the Python server's p95 of 342.41 ms was taken at its limit of 259
+requests per second, so most of that figure is queueing [6].
 
-Defaults decide whether any of this fires. In the MCP Python SDK every server
-result is `ttlMs: 0, cacheScope: "private"` out of the box, "immediately stale,
-never shared." Its client "has a built-in response cache, on by default," and
-honors a positive TTL. Sharing one cached copy across principals also needs
-`share_public`, which is "Off by default," and a list identical for everyone.
-The only effect size I found is a practitioner's statement, without a method,
-that "Cacheable lists cut repeat traffic 22%."
+## You do not own the list, so you do not own the cache
 
-## Headers versus bodies
+A large tool list slows any tool-calling agent, with or without MCP. What MCP
+changes is ownership. A third party writes the definitions, chooses how many there
+are and in what order, and can change them at runtime. With caching on, a large
+list costs the most on a cache miss, and someone else's server decides how often
+the miss happens.
 
-Before 2026-07-28 the method and tool name lived only in the JSON-RPC body, so a
-middlebox "had one option: buffer the request, parse the JSON-RPC envelope, and
-make its decision from the body," as Tigera puts it. The revision mirrors them
-into required `Mcp-Method` and `Mcp-Name` headers so intermediaries "can route
-and inspect requests without parsing the body." GitHub reads request values for
-logging and secret scanning and reports "no more inspecting the payload of every
-single request before the SDK does," with no number. Three conditions limit the
-fast path.
+The lists get large. Beyond the 55K example, Anthropic reports seeing tool
+definitions consume 134K tokens in its own systems before optimization [3].
 
-**Argument policy can move to headers; content inspection cannot.** A server may
-annotate primitive parameters with `x-mcp-header`, and conforming clients "MUST
-mirror the designated parameter values into HTTP headers," so a gateway can route
-or rate-limit by tenant without the body. Free-text arguments still need the
-body, and tool results, where injected instructions arrive, have no header form.
-Kuadrant's pull request #1500, open on 2026-10-06, skips body buffering only
-"when no prefix rewriting or guardrail inspection is required," prefixes being
-how that gateway federates tools without name collisions.
+The 2026-07-28 revision of the protocol gives servers a way to help. It requires
+`ttlMs` and `cacheScope` on every complete `tools/list` result [10], and the tools
+page says servers "SHOULD return tools in a deterministic order," because ordering
+"improves LLM prompt cache hit rates" [11]. That word is SHOULD. The server in the
+story, building its list from an unordered map, is conformant. The official Go SDK
+sorts its tools by unique ID [12]; other implementations have to make the same
+choice, and so does any gateway that merges several upstream lists.
 
-**The header is only as good as the body behind it.** A server that processes the
-body must reject mismatched headers with `HeaderMismatch` (`-32020`). The
-specification's reason is "potential security vulnerabilities when different components in the network
-rely on different sources of truth." The intermediary saves the parse; the server
-still parses and compares.
+Merging decides cacheability for the whole set. Kuadrant's `mcp-gateway` gives a
+merged list the shortest upstream TTL, marks it private if any upstream is
+private, and sets it to zero if any upstream returns zero [13]. One volatile
+server makes everything federated with it uncacheable.
 
-**Older traffic carries no trustworthy header.** For requests whose
-`MCP-Protocol-Version` predates header and body validation, an enforcing
-intermediary "SHOULD reject the request rather than trusting unvalidated header
-values." In a mixed fleet the cheap path covers only migrated traffic.
+Defaults decide whether any of this happens at all. In the MCP Python SDK every
+server result ships as `ttlMs: 0, cacheScope: "private"`, "immediately stale,
+never shared," while the client's response cache is on by default [14]. A server
+that never sets a TTL gets nothing from the client's cache.
 
-When you do open the body, the cost depends on the detector. ContextForge's
-credential patterns added 3.2 ms. TrueFoundry's injection detection added about
-117 ms, with totals from 152.6 to 200.3 ms across three repetitions, and it was
-the only injection detector of the six gateways tested, stopping 55 of 60 injected
-instructions. Part 2 argues for paying that on traffic from servers you did not
-write.
+## Every way to shrink the list adds a step
 
-## Throughput, and what the revision deleted
+Both major model vendors now document deferred loading. On Anthropic's API a tool
+found through tool search is expanded inline, and "The prefix is untouched, so
+prompt caching is preserved"; for an MCP server it is set once for the whole
+server [7]. OpenAI supports `tool_search` from gpt-5.4 onward [8].
 
-TM Dev Lab's benchmark is the most complete cross-implementation MCP server
-comparison I found with a published method: 15 implementations, real Redis and
-HTTP work, 39.9 million requests, 0% errors. Rust reached 4,845 requests per
-second and Python 259. It ran on the 2025-06-18 transport, the author says the
-results "do not constitute a general ranking of programming languages or
-frameworks," and names "FastMCP session overhead" as Python's bottleneck, a
-cost the new revision is designed to remove. I found no re-run.
+Deferral replaces the long list with a discovery step, and GitHub names its
+price: "each call to a virtual tool still results in a cache miss, an extra round
+trip, and an opportunity for a small percentage of agent operations to fail" [1].
+The hop grows with the catalog. PayPal measured its production `tool_search` over
+2,000 tools at a median of 440 ms and a p95 of 936 ms across 1,921 requests in 24
+hours, in a preprint about its own system [15]. At that size the median search hop
+equals the whole 400 ms GitHub saved by trimming. Deferral pays on turns that use
+a few known tools and costs on turns that have to search.
 
-Two findings transfer. Creating a server per request in Node.js and Bun "is the
-intentional design for stateless MCP servers," which the author says "sets a
-fixed 5-10ms overhead floor per request." And rmcp v0.16 answered every response
-as an event stream, with "approximately 40ms of pure transport overhead per
-request" on tools returning HTTP payloads; JSON responses took the same server
-from 1,283 to 4,845 requests per second. The benchmark's author fixed it upstream in
-rmcp v0.17.0. A pure-Redis tool ran at 1.11 ms on the same path, and no root
-cause was published, so the lesson is narrow: check your SDK's response mode and
-measure it.
+Code execution is the other way to shrink the list, and it makes its own trade.
+AIMultiple ran two web-browsing tasks on GPT-4.1 against an MCP server with 63
+tool definitions. Code execution cut total tokens by 77.4% and raised average
+latency from 9.66 s to 10.37 s, with output tokens rising from 87 to 192 per run
+and no cause published [16]. Fewer tokens did not mean a faster answer.
 
-The best measurement of per-session cost I found predates the revision.
-Stacklok's 2025 benchmark of its own ToolHive deployment ran Streamable HTTP at 50
-connections against a 100 requests per second target: 96.78 per second with a
-pool of ten sessions, 33.03 with a new session per request, and average response
-time rising from 6.68 ms to 1.12 s. It ran on a local kind cluster, and the page
-says its load generator could not send the full intended load, so part of the
-gap may be the generator.
+## The protocol's own overhead is real and narrow
 
-The after is thin. The maintainers describe "a stateless core that scales on
-ordinary HTTP infrastructure," Google says that moving these values into headers
-"drastically lowers the latency and processing overhead at the gateway layer," and GitHub, which removed
-Redis session reads from every call, says it "makes things snappier." None gives
-a number. The only before-and-after table I found is a practitioner's, on three
-FastMCP servers: 1,840 to 5,900 requests per minute, with no method and a row
-labeled "Throughput P99."
+Below the model, the protocol has costs of its own, and they show up in specific
+places. TM Dev Lab benchmarked 15 server implementations with real Redis and HTTP
+work, 39.9 million requests and 0% errors, on the 2025-06-18 protocol [6]. Rust
+reached 4,845 requests per second and Python 259, and the author names "FastMCP
+session overhead" as Python's bottleneck, a cost the new revision is designed to
+remove. Creating a server per request, the intended design for stateless servers
+in Node.js and Bun, "sets a fixed 5-10ms overhead floor per request" [6]. And rmcp
+before v0.17.0 answered every response as an event stream, adding "approximately
+40ms of pure transport overhead per request" on some tools; switching to JSON
+responses took the same server from 1,283 to 4,845 requests per second [6][17].
 
-## Where MCP is structurally slower
+The new revision also helps gateways route cheaply. It mirrors the method and tool
+name into required `Mcp-Method` and `Mcp-Name` headers, so intermediaries "can
+route and inspect requests without parsing the body" [18]. The fast path has
+limits. Free-text arguments and tool results, where injected instructions arrive,
+have no header form. A server that processes the body must still reject
+mismatched headers with `HeaderMismatch` [18]. And for requests on an older protocol version, an
+enforcing intermediary "SHOULD reject the request rather than trusting
+unvalidated header values" [18], so in a mixed fleet the fast path covers only
+migrated clients.
 
-When no model is in the loop, the protocol hop is pure overhead. A scheduled
-reconciliation that pushes 500 records through an MCP tool pays the hop on every
-record for an endpoint that was never in doubt, and routing it through an agent
-adds an inference pass per record on top.
+Where no model is in the loop, the protocol hop is the whole cost. MADBench, a
+University of Waterloo master's thesis presented on 2026-09-18, measured that hop
+across 5,378 traces with no model involved [19]. Its abstract reports the overhead
+ranging from a thousandth of database execution time for an in-process engine to
+three times it for a subprocess server on PostgreSQL, with the server's process
+model mattering more than the wire format. That figure comes from the abstract
+alone.
 
-The hop's size depends mostly on the server's process model. MADBench, a
-University of Waterloo master's thesis presented on September 18, 2026, measured
-this overhead with no model in the loop across 5,378 traces. Its abstract reports
-it ranging from a thousandth of the database execution time for an in-process
-engine to three times it for a subprocess server on PostgreSQL, with the process
-model rather than the wire format dominant. I have read the abstract, not the
-thesis.
+## What to do, depending on who you are
 
-Two features of the revision move cost from the connection to the wire. Multi
-round-trip requests turn a tool that needs user input into independent requests,
-each re-sending the parameters and an opaque `requestState`. Servers "MUST treat
-`requestState` as an attacker-controlled input" and, where it affects
-authorization or business logic, must protect its integrity. Servers "MAY choose to return an
-`InputRequiredResult` on multiple attempts at the same request," so no limit is
-set on rounds. And with stream resumability removed, a broken stream means
-re-issuing the call.
+**If you run agents for a platform team:** count the tools the model sees at the
+start of a turn, and keep it under 20 where you can [8]. Turn on deferred loading,
+then measure the search hop it adds, since PayPal's median was 440 ms at 2,000
+tools [15]. Treat a `listChanged` notification or a newly connected server as a
+prompt-cache event, and alert on it. That alert is the one the team in the story
+needed.
 
-Code execution shows the trade. AIMultiple ran two web-browsing tasks on GPT-4.1
-through an MCP server exposing 63 tool definitions. Code execution cut total
-tokens by 77.4% and raised average latency from 9.66 s to 10.37 s, with no
-variance published and no cause given. Output tokens rose from 87 to 192 per run,
-and my reading is that serially generated code accounts for some of the rise.
-Anthropic's "19+ inference passes" saved by orchestrating 20 or more calls in
-code describes a different task shape. The crossover is unpublished.
+**If you write MCP servers:** return `tools/list` in a sorted, byte-stable order.
+Set a positive `ttlMs` where the list is stable, and mark it `public` only when it
+is identical for every caller. Check your SDK's response mode and measure it; rmcp
+before v0.17.0 paid about 40 ms per call on some tools [17].
 
-## The default histogram cannot resolve the fast gateways
+**If you operate a gateway:** label every request that passes content inspection
+and report latency by that label, because one detector added 3.2 ms and another
+about 117 ms [5]. Keep a hosted control plane in the client's region; Cortx's 211
+ms was mostly network [5]. Measure the protocol-version mix, because it bounds the
+header fast path. And know how your gateway merges cache hints, since one private
+or zero-TTL upstream sets the result for the whole list [13].
 
-The OpenTelemetry MCP conventions advise bucket boundaries starting at 0.01
-seconds for both operation-duration metrics. Bifrost's and Docker's added
-latency, and ContextForge's 3.2 ms detector increment, all land in that first
-bucket, so the default histogram cannot tell them apart. Traces can, as can an
-exponential histogram or overridden boundaries. The same document still defines
-session-duration metrics for a construct the revision deleted; alignment issue
-#437 was open on 2026-10-06, and the repository has no releases.
+## What is still unsolved
 
-## Relationship to the AWS post
+The default metrics cannot see the cheapest component. With histogram buckets
+starting at 0.01 s [9], a fast gateway and a slow one look the same, so use
+traces or override the bucket boundaries until the conventions change.
 
-AWS's Well-Architected post of September 1, 2026, names three performance
-changes: protocol-declared caching (which it pairs with deterministic ordering),
-freshness semantics and header-based routing. It attaches no measurement to any
-of them. This part adds the measurements that exist and the conditions under
-which each mechanism does not fire.
+Nobody has yet published a before-and-after measurement of the stateless revision
+with its method, so the size of that improvement is unmeasured.
 
-## What to actually do
+The limit of this article is that its numbers come from separate studies on
+different setups. ProMCP is the one source here that measures a whole request
+path, and it measured a research setup of 20 servers and 169 tools. Until an
+operator publishes a trace of a production agent from question to answer, the
+cast table above compares studies, and should be read that way.
 
-**Defer tool loading before you trim by hand.** Both major model vendors document
-it, and Anthropic's keeps the cached prefix intact. Measure the discovery hop
-that replaces the surface; PayPal's median was 440 ms at 2,000 tools.
+## What it adds up to
 
-**Count the tools the model sees at the start of a turn.** Vendor guidance runs
-from under 20 to 50; stay toward the low end. GitHub's trim from 40 to 13 came
-with 190 ms off the first token and 400 ms off the final token.
-
-**Make your `tools/list` byte-stable, and treat changes as cache events.** Sort
-it, emit a positive `ttlMs` where it is stable, and mark it `public` only when it
-is identical for every caller. A `listChanged` notification or a newly connected
-server costs a prompt-cache miss.
-
-**Know how your gateway merges cache hints.** In a federated list, one private or
-zero-TTL upstream can make the whole list private or uncacheable. For per-user
-lists, cache upstream and filter at the edge, and budget for the filter.
-
-**Route on headers, and label every request that gets inspected.** Put tenant or
-region policy on `x-mcp-header` parameters. Inspection added 3.2 ms with one
-detector and about 117 ms with another, so make guardrail state a label on your
-latency metrics.
-
-**Expect the cheap path only for migrated traffic.** Measure the protocol-version
-mix at the gateway, because it bounds the fast path.
-
-**Check your SDK's response mode, and measure.** rmcp before v0.17.0 paid about
-40 ms per call on some tools.
-
-**Keep a hosted MCP control plane in the client's region.** It sits on every tool
-call, and Cortx's 211 ms was roughly 200 ms of network.
-
-**Use traces or finer buckets to see the gateway.** Client duration minus server
-duration per call separates a slow server from a slow path without tracing.
-
-**Do not put MCP in a loop with no model in it.** If code already knows the
-endpoint, call the endpoint.
+The time an MCP agent spends is mostly spent before any tool runs: the model
+reading and planning over the tool list, and the cache that list either hits or
+misses. The gateway most teams worry about is usually the smallest term, and the
+list is the one a third party can change overnight. Count the tools each agent
+sees, keep the list stable and short, and measure the gateway with traces rather
+than default histograms, so the slow part is the one you look at first.
 
 ---
 
@@ -319,50 +243,22 @@ operational excellence, security and reliability. Part five, on cost, follows.*
 
 All URLs verified 2026-10-06.
 
-**Specification and SDKs**
-1. Caching, 2026-07-28, for the cacheable results, the scope rules and the security considerations. https://modelcontextprotocol.io/specification/2026-07-28/server/utilities/caching
-2. Tools, 2026-07-28, for deterministic ordering as a SHOULD and per-authorization tool lists. https://modelcontextprotocol.io/specification/2026-07-28/server/tools
-3. Streamable HTTP, 2026-07-28, for the mirrored headers, `x-mcp-header`, header-body validation and the guidance on unvalidated headers. https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http
-4. Multi round-trip requests, 2026-07-28. https://modelcontextprotocol.io/specification/2026-07-28/basic/patterns/mrtr
-5. Changelog, 2026-07-28. https://modelcontextprotocol.io/specification/2026-07-28/changelog
-6. MCP Python SDK, client caching, for the server and client defaults. https://py.sdk.modelcontextprotocol.io/client/caching/
-7. MCP Go SDK, `mcp/features.go`, for features sorted by unique ID. https://github.com/modelcontextprotocol/go-sdk/blob/main/mcp/features.go
-
-**Measurement**
-8. Anjum, Zheng, Kettimuthu, Fan and Feng, "ProMCP: Profiling Token Flows and Latency Costs in Model Context Protocol-Based LLM Agents", Findings of ACL 2026. https://aclanthology.org/2026.findings-acl.1967.pdf
-9. Berk Kalelioğlu, "MCP Gateway Benchmark: Latency & Security of 6 Gateways", AIMultiple, updated 2026-10-05, with its data download. https://aimultiple.com/mcp-gateway
-10. Thiago Mendes, "MCP Server Performance Benchmark v2", TM Dev Lab, 2026-02-28. https://www.tmdevlab.com/mcp-server-performance-benchmark-v2.html
-11. rmcp pull request #683, "feat(streamable-http): add json_response option for stateless server mode", merged 2026-02-27. https://github.com/modelcontextprotocol/rust-sdk/pull/683
-12. Şevval Alper, "Code Execution with MCP", AIMultiple, updated 2026-08-14. https://aimultiple.com/code-execution-with-mcp
-13. Chris Burns, "MCP server performance: Transport protocol matters", Stacklok, 2025-08-19. https://stacklok.com/blog/mcp-server-performance-transport-protocol-matters/
-14. Noah Mogil, "Performance Testing of Twilio Alpha's MCP Server", Twilio, 2025-04-10. https://www.twilio.com/en-us/blog/developers/twilio-alpha-mcp-server-real-world-performance
-15. Yaseen Ahmed, "MADBench: Measuring Agentic Databases: Quantifying the Protocol Tax of MCP-Mediated Query Workloads", master's thesis presentation, University of Waterloo, 2026-09-18. https://cs.uwaterloo.ca/events/masters-thesis-presentation-data-systems-madbench-measuring-agentic-databases-quantifying-protocol-tax-mcp-mediated-query-workloads
-16. Deepak Bagada, "MCP Roadmap 2026 Goes Stateless: Tasks and Cards Ship Live", Daily AI World, 2026-09-21, for the unmethoded before-and-after table and the 22% figure. https://dailyaiworld.com/blogs/mcp-roadmap-stateless-tasks-server-cards
-
-**Tool surface and discovery**
-17. Anisha Agarwal and Connor Peet, "How we're making GitHub Copilot smarter with fewer tools", GitHub, 2025-11-19. https://github.blog/ai-and-ml/github-copilot/how-were-making-github-copilot-smarter-with-fewer-tools/
-18. Anthropic, "Introducing advanced tool use on the Claude Developer Platform", 2025-11-24. https://www.anthropic.com/engineering/advanced-tool-use
-19. Anthropic, tool search tool documentation, for thresholds and deferred loading. https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool
-20. Anthropic, prompt caching documentation, for the cache hierarchy and invalidation. https://platform.claude.com/docs/en/build-with-claude/prompt-caching
-21. OpenAI, function calling guide, for the soft threshold and `tool_search`. https://developers.openai.com/api/docs/guides/function-calling
-22. Gan and Sun, "RAG-MCP: Mitigating Prompt Bloat in LLM Tool Selection via Retrieval-Augmented Generation", arXiv:2505.03275, preprint. https://arxiv.org/abs/2505.03275
-23. Mudunuri, Wan, Qin and Manoharan, "Semantic Tool Discovery for Large Language Models: A Vector-Based Approach to MCP Tool Selection", arXiv:2603.20313, preprint. https://arxiv.org/abs/2603.20313
-24. Saha, Wang and Manoharan, "Hybrid Semantic Tool Discovery for Enterprise MCP Gateway: Architecture and Implementation", PayPal, arXiv:2608.23992, preprint, 2026-08-25. https://arxiv.org/abs/2608.23992
-
-**Gateways, headers and the revision in practice**
-25. ContextForge `streamablehttp_transport.py`, for the default `cache` mode and the visibility filter. https://github.com/IBM/mcp-context-forge/blob/main/mcpgateway/transports/streamablehttp_transport.py
-26. Sigilum gateway MCP runtime documentation, for the discovery cache and per-subject filtering. https://mintlify.wiki/PaymanAI/sigilum/api-reference/gateway/mcp
-27. Kuadrant `mcp-gateway` broker, for aggregated `ttlMs` and `cacheScope`. https://github.com/Kuadrant/mcp-gateway/blob/main/internal/broker/protocol_handler_2026.go
-28. Kuadrant `mcp-gateway` pull request #1500, "perf(router): skip prefix-free 2026 request bodies". https://github.com/Kuadrant/mcp-gateway/pull/1500
-29. GitHub changelog, "GitHub MCP Server supports the next MCP specification", 2026-07-23. https://github.blog/changelog/2026-07-23-github-mcp-server-supports-the-next-mcp-specification/
-30. Alister Baroi, "The New MCP Headers Are a Gift to Gateways", Tigera, 2026-08-06. https://www.tigera.io/blog/the-new-mcp-headers-are-a-gift-to-gateways/
-31. David Soria Parra and Den Delimarsky, release candidate post for 2026-07-28, 2026-05-21. https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/
-32. Kurtis Van Gent and Alan Blount, "Scaling AI agent infrastructure with the MCP stateless updates", Google, 2026-08-05. https://developers.googleblog.com/scaling-ai-agent-infrastructure-with-the-mcp-stateless-updates/
-33. Matt Carey, "The next generation of MCP", Cloudflare, 2026-08-06. https://blog.cloudflare.com/mcp-v2/
-
-**Observability**
-34. OpenTelemetry MCP semantic conventions. https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/gen-ai/mcp.md
-35. `semantic-conventions-genai` issue #437, alignment with protocol 2026-07-28. https://github.com/open-telemetry/semantic-conventions-genai/issues/437
-
-**Prior art**
-36. Komandooru, DeVries and Najafzadeh, "MCP went stateless: is your AWS MCP server deployment Well-Architected?", 2026-09-01. https://aws.amazon.com/blogs/architecture/mcp-went-stateless-is-your-aws-mcp-server-deployment-well-architected/
+1. Anisha Agarwal and Connor Peet, "How we're making GitHub Copilot smarter with fewer tools", GitHub, 2025-11-19. https://github.blog/ai-and-ml/github-copilot/how-were-making-github-copilot-smarter-with-fewer-tools/
+2. Anjum, Zheng, Kettimuthu, Fan and Feng, "ProMCP: Profiling Token Flows and Latency Costs in Model Context Protocol-Based LLM Agents", Findings of ACL 2026. https://aclanthology.org/2026.findings-acl.1967.pdf
+3. Anthropic, "Introducing advanced tool use on the Claude Developer Platform", 2025-11-24. https://www.anthropic.com/engineering/advanced-tool-use
+4. Anthropic, prompt caching documentation. https://platform.claude.com/docs/en/build-with-claude/prompt-caching
+5. Berk Kalelioğlu, "MCP Gateway Benchmark: Latency & Security of 6 Gateways", AIMultiple, updated 2026-10-05, with its data download. https://aimultiple.com/mcp-gateway
+6. Thiago Mendes, "MCP Server Performance Benchmark v2", TM Dev Lab, 2026-02-28. https://www.tmdevlab.com/mcp-server-performance-benchmark-v2.html
+7. Anthropic, tool search tool documentation. https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool
+8. OpenAI, function calling guide. https://developers.openai.com/api/docs/guides/function-calling
+9. OpenTelemetry MCP semantic conventions. https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/gen-ai/mcp.md
+10. MCP specification, Caching, 2026-07-28. https://modelcontextprotocol.io/specification/2026-07-28/server/utilities/caching
+11. MCP specification, Tools, 2026-07-28. https://modelcontextprotocol.io/specification/2026-07-28/server/tools
+12. MCP Go SDK, `mcp/features.go`. https://github.com/modelcontextprotocol/go-sdk/blob/main/mcp/features.go
+13. Kuadrant `mcp-gateway` broker, aggregated `ttlMs` and `cacheScope`. https://github.com/Kuadrant/mcp-gateway/blob/main/internal/broker/protocol_handler_2026.go
+14. MCP Python SDK, client caching. https://py.sdk.modelcontextprotocol.io/client/caching/
+15. Saha, Wang and Manoharan, "Hybrid Semantic Tool Discovery for Enterprise MCP Gateway: Architecture and Implementation", PayPal, arXiv:2608.23992, preprint, 2026-08-25. https://arxiv.org/abs/2608.23992
+16. Şevval Alper, "Code Execution with MCP", AIMultiple, updated 2026-08-14. https://aimultiple.com/code-execution-with-mcp
+17. rmcp pull request #683, "feat(streamable-http): add json_response option for stateless server mode", merged 2026-02-27. https://github.com/modelcontextprotocol/rust-sdk/pull/683
+18. MCP specification, Streamable HTTP, 2026-07-28. https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http
+19. Yaseen Ahmed, "MADBench: Measuring Agentic Databases: Quantifying the Protocol Tax of MCP-Mediated Query Workloads", master's thesis presentation, University of Waterloo, 2026-09-18. https://cs.uwaterloo.ca/events/masters-thesis-presentation-data-systems-madbench-measuring-agentic-databases-quantifying-protocol-tax-mcp-mediated-query-workloads
