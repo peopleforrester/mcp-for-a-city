@@ -21,6 +21,7 @@ checklist with you.
 | [research/approval-process-criteria.md](research/approval-process-criteria.md) | What an enterprise MCP approval process evaluates, against the published record |
 | [research/wrapping-mcp-servers.md](research/wrapping-mcp-servers.md) | Wrapping an MCP server inside an MCP server: how, why, and the one test |
 | [research/source-ledger.md](research/source-ledger.md) | Every claim on the gate and wrapping slides, its source, how it was read, and the date |
+| [research/](research/) | The research behind the talk, eighteen documents: gateways and registries, deployment, vetting, token economics, cost, performance, reliability, scale, security failures, the specification, and the component layers. Each is dated; notes added on publication flag what has moved since |
 | [sources/sources.md](sources/sources.md) | The sources slide |
 | [art/](art/) | The shadow-play scenes, the ship outlines, the cable sketches, the attack scenes. See the note below |
 | [film/](film/) | The shadow-play film: the narrated cut and the captions-only cut, as release links |
