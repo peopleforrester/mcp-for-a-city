@@ -3,7 +3,7 @@ title: "Something Peculiar in the Logs: How CVE-2026-47250 Turned an MCP Server 
 subtitle: "Operating MCP at scale, part two: security"
 date: 2026-09-21
 revised: 2026-10-06
-status: draft
+status: final
 prefix: "Research"
 series: "Operating MCP at Scale"
 part: 2
