@@ -95,7 +95,7 @@ published 2026-08-22, under "Improved primitives". Verbatim:
 **The shortened form is a misquote.** "A server with a hundred tools means the
 model pays for that entire surface before the user has asked a single question"
 drops the opening clause and changes the subject of the sentence. It appears in
-`research/ops/mcp-operations-at-scale-2026-09.md` and has been flagged there.
+`06-research-and-source-ledger/ops/mcp-operations-at-scale-2026-09.md` and has been flagged there.
 
 If this goes on a slide, put the whole sentence up and attribute it to both lead
 maintainers by name and to the post by date. Both of them are speaking at this

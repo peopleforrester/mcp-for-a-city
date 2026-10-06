@@ -19,11 +19,11 @@ Part A of the component research.
 re-covered here. For MCP gateways, the registry, server vetting and tool-call
 audit see:
 
-- `research/scale/mcp-at-scale-architecture-2026-09.md` (13 MCP gateways compared)
-- `research/bestpractice/mcp-gateway-and-registry-operations.md`
-- `research/bestpractice/mcp-token-economics-and-tool-consolidation.md` (prompt
+- `06-research-and-source-ledger/scale/mcp-at-scale-architecture-2026-09.md` (13 MCP gateways compared)
+- `06-research-and-source-ledger/bestpractice/mcp-gateway-and-registry-operations.md`
+- `06-research-and-source-ledger/bestpractice/mcp-token-economics-and-tool-consolidation.md` (prompt
   caching economics, the cache-hit arithmetic, tool-definition token cost)
-- `research/security/mcp-security-failures-2026-09.md`
+- `06-research-and-source-ledger/security/mcp-security-failures-2026-09.md`
 
 Section 5 below is the only place the two planes are deliberately compared, and it
 does so from the inference side.
@@ -136,7 +136,7 @@ Source: Palo Alto Networks press release
 [OFFICIAL] for the consideration figure.
 
 This resolves the **UNVERIFIED** flag carried in
-`research/scale/mcp-at-scale-architecture-2026-09.md` section 3, which recorded the
+`06-research-and-source-ledger/scale/mcp-at-scale-architecture-2026-09.md` section 3, which recorded the
 acquisition from secondary sources only. It is now verified against both the
 acquirer's press release and its annual report.
 
@@ -217,7 +217,7 @@ tracked by changelog rather than release.
   **For an agent workload this is close to useless**: MCP tool definitions sit in
   the request body, so any change to the tool list invalidates every entry, and
   agent turns are rarely byte-identical. See the prompt-cache discussion in
-  `research/bestpractice/mcp-token-economics-and-tool-consolidation.md` for why the
+  `06-research-and-source-ledger/bestpractice/mcp-token-economics-and-tool-consolidation.md` for why the
   provider-side prompt cache, which is prefix-based, is the one that pays.
 - **Rate limiting, dynamic routing with per-node fallback, logging, analytics.**
   Source: `https://developers.cloudflare.com/ai-gateway/`.
@@ -314,7 +314,7 @@ Performance and savings claims, **[VENDOR], unverified**: "Sub-3ms internal
 latency", "10B+ requests/month", "99.99% uptime", "30% average cost optimization".
 This repo already flags TrueFoundry's separate MCP-side claims ("~10ms Latency,
 Even Under Load", "350+ RPS on just 1 vCPU") as vendor-unverified in
-`research/bestpractice/mcp-gateway-and-registry-operations.md` line 448. The
+`06-research-and-source-ledger/bestpractice/mcp-gateway-and-registry-operations.md` line 448. The
 pattern is consistent across both product surfaces: round numbers, no methodology,
 no test harness published.
 
@@ -328,7 +328,7 @@ now returns HTTP 301 and resolves to **`theagentrouter/agent-router`** (reposito
 id 875880554, Apache-2.0, roughly 2,120 stars, pushed 2026-09-18).
 Source: GitHub API redirect resolution [OFFICIAL], 2026-09-18.
 
-This refines the statement in `research/scale/mcp-at-scale-architecture-2026-09.md`
+This refines the statement in `06-research-and-source-ledger/scale/mcp-at-scale-architecture-2026-09.md`
 section 2.2 that "Only the product name changed." The API group
 (`aigateway.envoyproxy.io`), the `aigw` CLI, container images and Go module path
 were retained as that file records, but the **GitHub org and repo path did change**,
@@ -349,7 +349,7 @@ HTTP CONNECT egress.
 **`v1.5.0`, 2026-08-27 stable; `v1.6.0-alpha.1`, 2026-09-14.** Apache-2.0, Agentic
 AI Foundation. Source: GitHub Releases API for `agentgateway/agentgateway`
 [OFFICIAL], 2026-09-18, which confirms the versions already recorded in
-`research/scale/`.
+`06-research-and-source-ledger/scale/`.
 
 Inference-side: v1.5.0 introduced API-key-scoped budgets and model access, plus
 native Gemini APIs. Rust data plane.
@@ -361,13 +361,13 @@ Apache-2.0, roughly 5,689 stars, CNCF Sandbox.
 Source: GitHub Releases API for `kgateway-dev/kgateway` [OFFICIAL], 2026-09-18.
 
 **This resolves the `UNVERIFIED` version flag** carried in
-`research/scale/mcp-at-scale-architecture-2026-09.md` section 2.1.
+`06-research-and-source-ledger/scale/mcp-at-scale-architecture-2026-09.md` section 2.1.
 
 kgateway is an Envoy-based Kubernetes Gateway API implementation that maintains two
 active release lines concurrently. On the inference path it is a general-purpose
 gateway with AI routing rather than an AI-specific product; its own description is
 "The Cloud-Native API Gateway and AI Gateway". For MCP it integrates agentgateway
-rather than implementing MCP itself, which is the existing finding in `research/scale/`.
+rather than implementing MCP itself, which is the existing finding in `06-research-and-source-ledger/scale/`.
 
 ### 2.11 Bedrock native routing (Amazon Bedrock Intelligent Prompt Routing)
 
@@ -554,7 +554,7 @@ analyses. This is structural, not a product gap, and it is why section 5 exists.
 finding stands and is reinforced here: per-key and per-team budgets are universally
 implemented, and attributing cost to a *person* through an *agent* through a chain
 of delegated calls is implemented nowhere. A virtual key identifies the agent, not
-the human who asked. See `research/scale/mcp-at-scale-architecture-2026-09.md`
+the human who asked. See `06-research-and-source-ledger/scale/mcp-at-scale-architecture-2026-09.md`
 section 9.
 
 **It cannot make a model deterministic, and routing makes this worse.** Azure's
@@ -658,7 +658,7 @@ and it is rarely stated as a trade.
 surveyed here publishes a saturation point, a degradation curve, a connection-pool
 exhaustion threshold, or a post-incident writeup for its AI gateway. The same gap
 was recorded for MCP gateways in
-`research/bestpractice/mcp-gateway-and-registry-operations.md` line 610. It repeats
+`06-research-and-source-ledger/bestpractice/mcp-gateway-and-registry-operations.md` line 610. It repeats
 on the inference side.
 
 What can be said structurally:
@@ -779,7 +779,7 @@ it governance.
 
 For the tool-plane side of this comparison, including per-tool authorization,
 revocation and call-level audit, see
-`research/scale/mcp-at-scale-architecture-2026-09.md` sections 2.1 to 2.3, which
+`06-research-and-source-ledger/scale/mcp-at-scale-architecture-2026-09.md` sections 2.1 to 2.3, which
 already treat it in depth.
 
 ---
@@ -856,7 +856,7 @@ body, 60 second to one month TTL) and **no hit-rate or savings figure**
 
 **The arithmetic that is trustworthy is already in this repo.** A cache hit costs
 roughly one tenth of a cache miss, derived from published provider prices, in
-`research/bestpractice/mcp-token-economics-and-tool-consolidation.md` section 1.3.
+`06-research-and-source-ledger/bestpractice/mcp-token-economics-and-tool-consolidation.md` section 1.3.
 That is prompt caching at the provider, which is prefix-based and deterministic, not
 gateway semantic caching. **For agent workloads the provider prompt cache is the
 larger and safer win**, and it is degraded by exactly the thing gateways do: an
@@ -905,14 +905,14 @@ Corrections and resolutions against existing files in this repo:
 
 1. **Portkey acquisition is now verified** against the Palo Alto press release and
    the FY2026 10-K ($117 million, completed 2026-05-29). Resolves the
-   **UNVERIFIED** flag in `research/scale/mcp-at-scale-architecture-2026-09.md`
+   **UNVERIFIED** flag in `06-research-and-source-ledger/scale/mcp-at-scale-architecture-2026-09.md`
    section 3.
 2. **LiteLLM version resolved**: `v1.101.0`, 2026-09-15. Resolves the
    **UNVERIFIED** flag in the same file. Licence is more precisely "MIT except the
    `enterprise/` directory", not MIT.
 3. **kgateway version resolved**: `v2.4.5`, 2026-09-16. Resolves the
-   **UNVERIFIED** flag in `research/scale/` section 2.1.
-4. **Refinement, not a correction**: `research/scale/` section 2.2 states of the
+   **UNVERIFIED** flag in `06-research-and-source-ledger/scale/` section 2.1.
+4. **Refinement, not a correction**: `06-research-and-source-ledger/scale/` section 2.2 states of the
    Agent Router rename that "Only the product name changed." The API group, CLI,
    images and Go module path were retained as stated, and the **GitHub repository
    also moved**, from `envoyproxy/ai-gateway` to `theagentrouter/agent-router`,

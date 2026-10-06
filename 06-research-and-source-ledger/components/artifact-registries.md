@@ -16,11 +16,11 @@ things get called a registry, and a fourth, the MCP registry, is already covered
 in depth and is not re-covered here.
 
 **Do not read this file for MCP registry mechanics.** Those live in
-`research/bestpractice/mcp-gateway-and-registry-operations.md`, Part 2, which
+`06-research-and-source-ledger/bestpractice/mcp-gateway-and-registry-operations.md`, Part 2, which
 covers the official registry contract, `server.json`, private registry cost,
 ingest, freshness, revocation, signing and the absence of federation. This file
 references that work and does not repeat it. Prompt cache economics live in
-`research/bestpractice/mcp-token-economics-and-tool-consolidation.md`, Section 2,
+`06-research-and-source-ledger/bestpractice/mcp-token-economics-and-tool-consolidation.md`, Section 2,
 and are referenced rather than re-derived.
 
 ## Sourcing labels
@@ -228,7 +228,7 @@ while it revalidates in the background." Configurable via `cache_ttl_seconds`
 what the model provider charges.
 
 **Cache two: the model provider's prompt cache.** Documented in detail in
-`research/bestpractice/mcp-token-economics-and-tool-consolidation.md`, Section 2,
+`06-research-and-source-ledger/bestpractice/mcp-token-economics-and-tool-consolidation.md`, Section 2,
 including Anthropic's published cache prefix ordering (`tools`, then `system`,
 then `messages`) and the invalidation table. That file is the reference; it is not
 repeated here.
@@ -277,7 +277,7 @@ citing the specification and `v1.0.1` when citing the release, and do not merge
 them into one number.
 
 The AAIF post read in this pass lists five projects (AGENTS.md, goose, MCP,
-agentgateway, A2A). `research/scale/mcp-at-scale-architecture-2026-09.md` records
+agentgateway, A2A). `06-research-and-source-ledger/scale/mcp-at-scale-architecture-2026-09.md` records
 six, adding Agent Router. The two are not necessarily in conflict, since they were
 read at different times, but do not assert a project count from this file.
 
@@ -409,7 +409,7 @@ reviewed an MCP server's tools has reviewed a snapshot of them.
 
 ## 3.5 MCP Server Cards: current status, corrected
 
-`research/bestpractice/mcp-gateway-and-registry-operations.md` recorded SEP-2127
+`06-research-and-source-ledger/bestpractice/mcp-gateway-and-registry-operations.md` recorded SEP-2127
 as "Draft, target Apr 3 2026, not shipped" on 2026-09-18, sourced from the Server
 Card WG charter page. Checked against the SEP itself and the GitHub API on the
 same day, the picture is more specific:
@@ -508,7 +508,7 @@ The SEP draws the boundary between the two MCP documents itself:
    encodes a namespace claim. `AgentCard.name` is "a human readable name" with no
    structure at all. Deduplicating across the two is a naming problem before it is
    a schema problem, which is the same failure documented in
-   `research/bestpractice/mcp-gateway-and-registry-operations.md` section 8.1.
+   `06-research-and-source-ledger/bestpractice/mcp-gateway-and-registry-operations.md` section 8.1.
 
 ## 3.7 Are they converging? Yes, but not in the way the question implies
 
@@ -638,7 +638,7 @@ agents that have an Entra agent identity. Page `ms.date`
 <https://learn.microsoft.com/en-us/entra/agent-id/agent-registry-convergence>
 [OFFICIAL]. Entra Agent ID itself, including the directory object type, blueprints
 and the sponsor field, is already covered in
-`research/ecosystem/microsoft-mcp-control-plane.md` section 2.1 and is not
+`06-research-and-source-ledger/ecosystem/microsoft-mcp-control-plane.md` section 2.1 and is not
 re-covered here.
 
 ---
@@ -675,7 +675,7 @@ sections 3.1.11, 13.3, and the operation list in section 3.1.
 existing registry research documents this for MCP: status is real and is not in
 `server.json`, it lives in registry-owned `_meta`, and revocation propagation to
 downstream aggregators has no guarantee. See
-`research/bestpractice/mcp-gateway-and-registry-operations.md` sections 5.3, 6.2
+`06-research-and-source-ledger/bestpractice/mcp-gateway-and-registry-operations.md` sections 5.3, 6.2
 and 6.3. The same hole exists on the A2A side with less machinery around it, since
 there is no standard registry API at all.
 
@@ -747,7 +747,7 @@ defined for it.
   aggregators is the only defined relationship, with no trust protocol, no signing
   chain, no revocation propagation guarantee, no conflict resolution and no
   freshness contract. Established in
-  `research/bestpractice/mcp-gateway-and-registry-operations.md` section 6.5 and
+  `06-research-and-source-ledger/bestpractice/mcp-gateway-and-registry-operations.md` section 6.5 and
   not re-derived here.
 - A2A: weaker still, because there is no standard registry API to federate. "The
   current A2A specification does not prescribe a standard API for curated

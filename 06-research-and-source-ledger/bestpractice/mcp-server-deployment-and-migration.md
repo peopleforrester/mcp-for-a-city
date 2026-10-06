@@ -12,8 +12,8 @@ audience: "Agentic AI Foundation and MCP maintainers, MCP Dev Summit Toronto 202
 # Deploying and Operating MCP Servers
 
 Research for "Governing MCP for a Workforce the Size of a City", MCP Dev Summit
-Toronto, 2026-10-06. Companion to `research/spec/`, `research/ops/`,
-`research/scale/` and `research/security/` in this repo.
+Toronto, 2026-10-06. Companion to `06-research-and-source-ledger/spec/`, `06-research-and-source-ledger/ops/`,
+`06-research-and-source-ledger/scale/` and `06-research-and-source-ledger/security/` in this repo.
 
 ## How to read the sourcing
 
@@ -679,7 +679,7 @@ control is gone, replaced by `io.modelcontextprotocol/logLevel` per request, so
 "turn up logging on the running server" becomes a client-side change.
 
 **DCR to Client ID Metadata Documents.** Covered in depth in
-`research/spec/mcp-specification-state-2026-09.md` Section 3.10. The operational
+`06-research-and-source-ledger/spec/mcp-specification-state-2026-09.md` Section 3.10. The operational
 summary: CIMD requires the client to host a JSON document at an HTTPS URL whose
 `client_id` matches the URL exactly, which is a hosting requirement most desktop
 and CLI clients did not previously have. In exchange, verbatim from the spec:
@@ -695,7 +695,7 @@ the new authorization server."
 ## 5. Official best practice for building and operating a server
 
 Everything in this section is **[SPEC]** or **[OFFICIAL]** and quoted. Vendor and
-practitioner material is in `research/scale/` and `research/ops/`.
+practitioner material is in `06-research-and-source-ledger/scale/` and `06-research-and-source-ledger/ops/`.
 
 ### 5.1 The four transport-security requirements
 
@@ -715,7 +715,7 @@ practitioner material is in `research/scale/` and `research/ops/`.
 > local MCP servers from remote websites.
 
 Read the normative levels carefully, because this is the spine of the "optional
-but load-bearing" argument in `research/spec/` Section 8. Origin validation is a
+but load-bearing" argument in `06-research-and-source-ledger/spec/` Section 8. Origin validation is a
 **MUST**. Binding to localhost is a **SHOULD**. **Authentication on the
 network-exposed transport is a SHOULD.** A server can be fully conformant,
 reachable on the public internet, and unauthenticated.
@@ -796,7 +796,7 @@ That asymmetry is worth naming.
 (B13) and are also supported on `server/discover`. `cacheScope` takes `"public"`
 or `"private"` and governs whether a shared intermediary may cache the result.
 Getting it wrong on a multi-tenant server is tenant-data disclosure through a
-CDN; that failure mode is catalogued as F15 in `research/ops/`.
+CDN; that failure mode is catalogued as F15 in `06-research-and-source-ledger/ops/`.
 
 ### 5.4 Long-running operations and streams
 
@@ -821,7 +821,7 @@ are easy to miss, verbatim:
 > timeouts during quiet periods
 
 The keep-alive guidance pairs directly with the layered-idle-timeout failure mode
-catalogued as F10 in `research/ops/` from the AWS Architecture Blog. The spec
+catalogued as F10 in `06-research-and-source-ledger/ops/` from the AWS Architecture Blog. The spec
 names the mitigation; the AWS post names the three tiers whose timeouts have to
 agree.
 
@@ -850,7 +850,7 @@ agree.
 > Clients **SHOULD** provide tool execution errors to language models to enable
 > self-correction.
 
-The operational consequence, catalogued as F13 in `research/ops/`: a tool
+The operational consequence, catalogued as F13 in `06-research-and-source-ledger/ops/`: a tool
 execution error is a JSON-RPC *result*, carried on a successful HTTP response.
 Monitoring that alarms on 5xx sees a perfectly healthy server while every tool
 call fails. **Any MCP server SLO built on HTTP status codes is measuring the
@@ -1073,7 +1073,7 @@ together under this heading:
 - **[SPEC]** From the tools page: "Server developers **SHOULD NOT** mark sensitive
   parameters (passwords, API keys, tokens, PII) with `x-mcp-header`, as header
   values are visible to network intermediaries."
-- **[SPEC]** From the elicitation page (via `research/spec/` 5.3): servers
+- **[SPEC]** From the elicitation page (via `06-research-and-source-ledger/spec/` 5.3): servers
   "**MUST NOT** use form mode elicitation to request sensitive information such as
   passwords, API keys, access tokens, or payment credentials" and "**MUST** use
   URL mode for interactions involving such sensitive information".
@@ -1089,7 +1089,7 @@ container or package distribution practice for MCP servers. The registry defines
 package types
 (https://modelcontextprotocol.io/registry/package-types) and delegates security
 scanning outward. **[OFFICIAL]** From the registry docs, quoted in
-`research/spec/` 6.6:
+`06-research-and-source-ledger/spec/` 6.6:
 
 > The MCP Registry delegates security scanning to: **Underlying package
 > registries** [...] **Downstream aggregators**
@@ -1098,14 +1098,14 @@ So the supply-chain answer in the official ecosystem is "npm, PyPI and whoever
 aggregates us". Do not present a container hardening standard as MCP guidance;
 there is not one. Vendor gateway and catalogue approaches (Docker MCP Gateway,
 Stacklok ToolHive, IBM Context Forge, Kong, agentgateway) are catalogued with
-URLs in `research/scale/mcp-at-scale-architecture-2026-09.md` and are **[VENDOR]**
+URLs in `06-research-and-source-ledger/scale/mcp-at-scale-architecture-2026-09.md` and are **[VENDOR]**
 by construction.
 
 ---
 
 ## 7. Published reference architectures
 
-Deliberately short, because `research/scale/` covers the gateway and platform
+Deliberately short, because `06-research-and-source-ledger/scale/` covers the gateway and platform
 landscape in depth with its own source list. These are the ones that speak
 directly to deploying a server against the current revision.
 

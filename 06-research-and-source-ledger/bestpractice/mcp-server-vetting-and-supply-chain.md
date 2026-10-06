@@ -12,7 +12,7 @@ status: draft
 
 > **Note added 2026-10-06, on publication:** This file says Anthropic's connector review criteria are unpublished. They are now published: https://claude.com/docs/connectors/building/review-criteria
 
-Built for the MCP Dev Summit Toronto keynote, 2026-10-06, delivered to the Agentic AI Foundation. Companion to `research/security/mcp-security-failures-2026-09.md`, which catalogues the failures this document is about preventing.
+Built for the MCP Dev Summit Toronto keynote, 2026-10-06, delivered to the Agentic AI Foundation. Companion to `06-research-and-source-ledger/security/mcp-security-failures-2026-09.md`, which catalogues the failures this document is about preventing.
 
 **Source class convention.** Every source is labelled:
 
@@ -624,6 +624,6 @@ All fetched 2026-09-18 unless noted.
 - github.com/microsoft/mcp-interviewer; github.com/slowmist/MCP-Security-Checklist; arxiv.org/abs/2504.03767
 - engineering.block.xyz playbook; allthingsopen.org Block scale article; devblogs.microsoft.com Learn MCP server
 - wiz.io MCP security research briefing; paloaltonetworks.com MCP security overview
-- Cross-referenced against `research/security/mcp-security-failures-2026-09.md`, verified 2026-09-17
+- Cross-referenced against `06-research-and-source-ledger/security/mcp-security-failures-2026-09.md`, verified 2026-09-17
 
 This session used WebFetch only; the WebSearch budget was exhausted before it began. Every URL was seeded from the existing corpus or from `modelcontextprotocol.io/llms.txt` and followed outward.

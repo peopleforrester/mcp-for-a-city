@@ -30,10 +30,10 @@ The corpus already carries the following, and this file references rather than r
 
 | Already covered | Where |
 |---|---|
-| Failure modes F1 to F20, including the tool-definition context tax, retry storms, `isError` on HTTP 200, and layered idle timeouts | `research/ops/mcp-operations-at-scale-2026-09.md` §1 |
-| The stateless dissent (Amelin), the WorkOS resumability account, the AWS well-architected post, pgEdge transport failure modes | `research/ops/` §2.5 to §2.7 |
-| Statelessness removing sticky routing; Kubernetes as substrate; ToolHive and ContextForge deployment shapes | `research/scale/mcp-at-scale-architecture-2026-09.md` §6 |
-| Whether the gateway is a single point of failure, and the Enterprise IG's acknowledgement of the gap | `research/bestpractice/mcp-gateway-and-registry-operations.md` §3.6 |
+| Failure modes F1 to F20, including the tool-definition context tax, retry storms, `isError` on HTTP 200, and layered idle timeouts | `06-research-and-source-ledger/ops/mcp-operations-at-scale-2026-09.md` §1 |
+| The stateless dissent (Amelin), the WorkOS resumability account, the AWS well-architected post, pgEdge transport failure modes | `06-research-and-source-ledger/ops/` §2.5 to §2.7 |
+| Statelessness removing sticky routing; Kubernetes as substrate; ToolHive and ContextForge deployment shapes | `06-research-and-source-ledger/scale/mcp-at-scale-architecture-2026-09.md` §6 |
+| Whether the gateway is a single point of failure, and the Enterprise IG's acknowledgement of the gap | `06-research-and-source-ledger/bestpractice/mcp-gateway-and-registry-operations.md` §3.6 |
 | Connection handling after sessions were removed, keep-alives, `X-Accel-Buffering` | `bestpractice/mcp-gateway-and-registry-operations.md` §3.4 |
 | Idempotency after resumability was removed; dual-era sticky routing; the `resultType` compatibility branch | `bestpractice/mcp-server-deployment-and-migration.md` §3.1 to §3.3 |
 | Error semantics, the two-mechanism model, the explicit-handle pattern | `bestpractice/mcp-server-deployment-and-migration.md` §5.4 to §5.6 |
@@ -106,7 +106,7 @@ it is three days old at the time of writing.
 
 ## 2. Failure-mode table
 
-New modes, numbered R to keep them distinct from the F-series in `research/ops/`.
+New modes, numbered R to keep them distinct from the F-series in `06-research-and-source-ledger/ops/`.
 Ordered by how hard the mode is to detect before it hurts.
 
 | # | Failure mode | What it looks like | Evidence | Label |
@@ -164,7 +164,7 @@ Source: https://bex.co/blog/2026/09/09/mcp-stateless-deploy-from-chat (read
 
 That is the reliability win, and it is larger than the cost saving. AWS priced
 the deleted session store at "about $23/month" for a two-node ElastiCache
-(recorded in `research/ops/` §2.6). Twenty three dollars is not why anyone did
+(recorded in `06-research-and-source-ledger/ops/` §2.6). Twenty three dollars is not why anyone did
 this. Retryability against a pool is.
 
 **Two carve-outs, both already in the corpus and both load-bearing here.** A
@@ -434,7 +434,7 @@ evidence that does exist, labeled as inference.
    **[MEASURED]**
 2. **Connection pools and file descriptors on the server.** R9, measured.
 3. **The model endpoint.** Agent workloads are token-bound far more often than
-   request-bound, and `research/bestpractice/mcp-token-economics-and-tool-consolidation.md`
+   request-bound, and `06-research-and-source-ledger/bestpractice/mcp-token-economics-and-tool-consolidation.md`
    covers that whole axis. A tool call costs a few milliseconds of MCP and a few
    thousand tokens of inference.
 4. **The MCP server's own compute.** Only for CPU-bound tools, and Python is the
@@ -521,7 +521,7 @@ than anything else found:
 > "An agent system should never consume more resources trying to recover from a
 > failure than it would have consumed succeeding on the first attempt."
 
-`research/ops/` F11 already carries pgEdge on retry storms from the transport
+`06-research-and-source-ledger/ops/` F11 already carries pgEdge on retry storms from the transport
 side. The new part is that with an agent the amplification is multiplicative
 across a chain, and that the budget it consumes is the token budget rather than
 the connection pool.
@@ -546,7 +546,7 @@ https://github.com/strands-agents/harness-sdk/issues/4403 , opened 2026-09-19,
 **open** when read 2026-09-21. **[PRACTITIONER]**
 
 pgEdge's numbers remain the only published starting point, already in
-`research/ops/` §2.7: connection timeout around 600 s, idle session timeout
+`06-research-and-source-ledger/ops/` §2.7: connection timeout around 600 s, idle session timeout
 300 s, hard request timeout 30 s, offered explicitly as a Postgres-backed
 starting point rather than a universal. Nothing better has been published since.
 
@@ -943,7 +943,7 @@ tail latency compounds along the trajectory rather than affecting one request in
 twenty. The vendor framework's phrasing of this is correct: "Agents make
 hundreds of tool calls per session, a P99 in the seconds is a session in the
 minutes." This is the same observation Amelin makes about cost from the other
-direction, already in `research/ops/` §2.5: "A protocol that is cheap per request
+direction, already in `06-research-and-source-ledger/ops/` §2.5: "A protocol that is cheap per request
 and expensive per hour benchmarks very well and behaves differently in
 production." Latency and cost have the same per-trajectory accounting problem.
 
@@ -974,7 +974,7 @@ parameters" (`bestpractice/` §5.5). So an error message that tells the model th
 input was malformed converts a failure into a successful second attempt, and one
 that says "an error occurred" converts it into a retry storm. **The quality of
 the error string is a reliability control.** That is not true of an HTTP API
-consumed by code, and it is why `research/ops/` §4.8 lists error messages as
+consumed by code, and it is why `06-research-and-source-ledger/ops/` §4.8 lists error messages as
 prompts under mitigations. Restated here as an SLO input rather than a token
 optimization.
 

@@ -13,7 +13,7 @@ audience: "MCP maintainers and enterprise platform engineers, MCP Dev Summit Tor
 
 Research for topics A and B of "Governing MCP for a Workforce the Size of a City".
 
-Companion to `research/ops/mcp-operations-at-scale-2026-09.md`. That file's Section 7
+Companion to `06-research-and-source-ledger/ops/mcp-operations-at-scale-2026-09.md`. That file's Section 7
 documents three widely circulated figures that are wrong. This file does not repeat them,
 and Section 10 below adds two more that also fail verification.
 

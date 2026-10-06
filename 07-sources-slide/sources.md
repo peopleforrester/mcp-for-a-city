@@ -32,6 +32,6 @@ Links for the three the slide names in short form:
 
 ## Where the figures are checked claim by claim
 
-- [research/source-ledger.md](../research/source-ledger.md): each claim, its source URL, how it was read, and the date
-- [research/approval-process-criteria.md](../research/approval-process-criteria.md): the research behind the six gates
-- [research/wrapping-mcp-servers.md](../research/wrapping-mcp-servers.md): the research behind the wrapping slides
+- [research/source-ledger.md](../06-research-and-source-ledger/source-ledger.md): each claim, its source URL, how it was read, and the date
+- [research/approval-process-criteria.md](../06-research-and-source-ledger/approval-process-criteria.md): the research behind the six gates
+- [research/wrapping-mcp-servers.md](../06-research-and-source-ledger/wrapping-mcp-servers.md): the research behind the wrapping slides

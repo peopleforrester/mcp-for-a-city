@@ -1,0 +1,19 @@
+# ABOUTME: Citation metadata for the keynote and its collateral; GitHub's "Cite this repository" reads it.
+# ABOUTME: Update date-released and version when the series leaves draft.
+cff-version: 1.2.0
+message: "If you cite this talk or its research, please cite it as below."
+type: dataset
+title: "Governing MCP for a Workforce the Size of a City: keynote collateral and the Operating MCP at Scale series"
+authors:
+  - family-names: Forrester
+    given-names: Michael Rishi
+    website: "https://michaelrishiforrester.com/"
+date-released: 2026-10-06
+license: CC-BY-4.0
+repository-code: "https://github.com/peopleforrester/mcp-for-a-city"
+url: "https://mcp.michaelrishiforrester.com/"
+keywords:
+  - model-context-protocol
+  - mcp
+  - ai-governance
+  - platform-engineering
