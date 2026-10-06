@@ -3,6 +3,7 @@ title: "Operating MCP at Scale: the enterprise checklist for 2026-07-28"
 subtitle: "Operating MCP at scale, the companion checklist"
 date: 2026-10-05
 status: draft
+prefix: "Research"
 series: "Operating MCP at Scale"
 part: checklist
 sources_verified_on: 2026-10-05
@@ -127,7 +128,8 @@ from the keynote, with every verify step, are the business-side companion:
 [approval-gates.md](../04-approval-gates-checklist/approval-gates.md).
 
 - [ ] **Gate 0, intake, automated.** Fingerprint with `server/discover`, run a
-  conformance tool with warnings failing the build, scan statically, all inside
+  conformance or scanning tool that fails the build on a finding (one sends tool
+  descriptions to its vendor's service; know which), scan statically, all inside
   an isolated container, because scanning a stdio server means running it.
 - [ ] **Gate 1, provenance.** Registry namespace proof, package signatures,
   SLSA level 2 as a floor. Record it as an audit trail, never as a safety
@@ -140,6 +142,12 @@ from the keynote, with every verify step, are the business-side companion:
   assembled tool set per agent, not each server alone.
 - [ ] **Gate 4, continuous.** Pin digests, re-hash, fail closed on any
   difference, and gate at a proxy on the required headers.
+- [ ] **Enforce a server allowlist in every client you manage**, from managed
+  settings users cannot broaden, because a stdio server on a laptop never reaches
+  your gateway. The lists match a command string, not a binary: environment
+  variables are not compared, and an allowlisted `npx -y <package>` runs whatever
+  the registry serves at launch, so pin the version in the command. Each client
+  keeps its own list, so three clients means three policies. Practice, part two.
 - [ ] **Know your revocation latency.** A registry entry cannot be unpublished,
   only flagged, and nothing pushes the change to a running agent. Your
   revocation latency is your poll interval. Practice, part two.

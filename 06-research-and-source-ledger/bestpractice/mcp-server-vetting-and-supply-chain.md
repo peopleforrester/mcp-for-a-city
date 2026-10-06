@@ -269,6 +269,16 @@ Three tools exist. Together they cover static description analysis, adversarial 
 
 **Source:** OFFICIAL (project README). Original: <https://github.com/invariantlabs-ai/mcp-scan>. Pre-acquisition README read at tag `v0.3.0` on 2026-09-18 via `raw.githubusercontent.com`.
 
+> **Current state, read 2026-10-06:** the repository now redirects to
+> <https://github.com/snyk/agent-scan>, published as **Snyk Agent Scan** (PyPI `snyk-agent-scan`).
+> Its README no longer describes hash-based change detection or a whitelist of
+> approved tool hashes; the pinning mechanism below is documented for v0.3.0 only.
+> It says Agent Scan "validates discovered components with local checks and the
+> Agent Scan API" and "sends the component information needed for analysis,
+> including agent application details, MCP server configurations and signatures,
+> tool names and descriptions, and skill content. Secrets in configuration values
+> and text are redacted before transmission." It requires a Snyk API token.
+
 **Provenance note worth stating.** mcp-scan was built by Invariant Labs, the team that disclosed tool poisoning, rug pulls and tool shadowing in April 2025. It is now a **Snyk** product, surfaced as "Agent Scan" and integrated with Snyk Evo. The independent tool that found the class became a commercial product of a security vendor within about eighteen months. That is a fact about the ecosystem, not a criticism of either party.
 
 Two modes:
@@ -290,7 +300,7 @@ State is kept in `--storage-file`, "Path to store scan results and whitelist inf
 
 > Invariant Labs is collecting data for security research purposes (only about tool descriptions and how they change over time, not your user data). Don't use MCP-scan if you don't want to share your tools.
 
-Guardrails and proxying are stated to operate entirely locally with no external API calls; the static scan's description analysis is the part that leaves the building. Whether this holds under Snyk is **UNVERIFIED**.
+Guardrails and proxying are stated to operate entirely locally with no external API calls; the static scan's description analysis is the part that leaves the building. Whether this holds under Snyk is **UNVERIFIED**. **Resolved 2026-10-06:** under Snyk, tool names and descriptions still go to a remote service, the Agent Scan API, per the current README quoted above.
 
 The current documentation lists "15+ security risks" across MCP servers and Agent Skills in v0.6+: prompt injection, dangerous words, untrusted content, private data, destructive capabilities, suspicious download URLs, malicious code patterns, insecure credential handling, hardcoded secrets. CLI output is marked experimental in both lines: "We do not recommend building production workflows that depend on specific CLI output fields."
 
@@ -337,7 +347,7 @@ This is the part of the review that has no good answer, and saying so precisely 
 
 The tool description is simultaneously the documentation a human reads, the specification an LLM acts on, and attacker-controlled input. Invariant Labs demonstrated on 2025-04-01 that instructions embedded in a description are invisible to the user in the clients they tested and fully visible to the model (<https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks>, verified 2026-09-17).
 
-A human reviewer reading a description for injection is doing a task the MCPTox benchmark measured models failing at. From the companion document: across 20 agents on 1,312 malicious cases built from 45 live servers and 353 authentic tools, the **highest refusal rate observed was under 3%**, from Claude-3.7-Sonnet, and more capable models were often more susceptible (arXiv:2508.14925). Nothing establishes that a human reviewer, skimming the fortieth description of the afternoon, does better.
+A human reviewer reading a description for injection is doing a task the MCPTox benchmark measured models failing at. From the companion document: across 20 agents on 1,348 malicious cases (1,312 in v1; v2 read 2026-10-06) built from 45 live servers and 353 authentic tools, the **highest refusal rate observed was under 3%**, from Claude-3.7-Sonnet, and more capable models were often more susceptible (arXiv:2508.14925). Nothing establishes that a human reviewer, skimming the fortieth description of the afternoon, does better.
 
 ### 4.2 The one mechanical control that exists: hash and diff
 
@@ -348,7 +358,7 @@ The only published, implemented approach is to treat the description as a versio
 3. **Re-fetch and compare** on a schedule and before each deployment.
 4. **Fail closed** on any diff. A changed description is an unapproved server until re-reviewed.
 
-Implemented by mcp-scan via `--storage-file` and its whitelist, described in its own words as detecting "changes to MCP tools via hashing" (section 3.1). This is the mechanism behind SlowMist's three unexplained requirements: "Verify the authenticity and integrity of registered tools", "Check for name conflicts or malicious overwriting before registering", "Verify whether the updated tools contain any malicious descriptions".
+Implemented by mcp-scan v0.3.0 via `--storage-file` and its whitelist, described in its own words as detecting "changes to MCP tools via hashing" (section 3.1). The current Snyk Agent Scan README no longer describes this mechanism (read 2026-10-06), so do not cite it as a current feature. This is the mechanism behind SlowMist's three unexplained requirements: "Verify the authenticity and integrity of registered tools", "Check for name conflicts or malicious overwriting before registering", "Verify whether the updated tools contain any malicious descriptions".
 
 **The 2026-07-28 revision makes this materially easier, and this is a genuinely good-news finding for the talk.** From the changelog, major change 1:
 

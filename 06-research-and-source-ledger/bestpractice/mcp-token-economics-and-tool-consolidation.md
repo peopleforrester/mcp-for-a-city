@@ -650,7 +650,7 @@ synthesis.
 independent lines of evidence.
 
 **Evidence 1: a tool the model cannot see cannot be induced to call.** MCPTox measured tool
-poisoning across 45 live real-world MCP servers, 353 authentic tools, 1,312 malicious cases
+poisoning across 45 live real-world MCP servers, 353 authentic tools, 1,348 malicious cases (1,312 in v1; v2 read 2026-10-06)
 in 10 risk categories. Attack success reached **72.8% on o1-mini**. The best refusal rate
 observed, on Claude-3.7-Sonnet, was **under 3%**. More capable models were **more**
 susceptible, which the authors attribute to "the attack exploits their superior

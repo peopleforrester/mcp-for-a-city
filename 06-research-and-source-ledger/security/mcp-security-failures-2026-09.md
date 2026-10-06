@@ -228,7 +228,7 @@ Note the trend across the three: Knostic found 100% unauthenticated in a 119-ser
 
 **Wang et al., "MCPTox: A Benchmark for Tool Poisoning Attack on Real-World MCP Servers"**, arXiv:2508.14925, 2025-08-19. <https://arxiv.org/abs/2508.14925>
 
-- Built on **45 live MCP servers** and **353 authentic tools**, producing **1,312 malicious test cases** across 10 risk categories and three attack templates.
+- Built on **45 live MCP servers** and **353 authentic tools**, producing **1,348 malicious test cases** (v2; 1,312 in v1, corrected 2026-10-06) across 10 risk categories and three attack templates.
 - Evaluated **20 LLM agents**.
 - o1-mini reached an attack success rate of **72.8%**.
 - The paper reports that **more capable models are often more susceptible**.

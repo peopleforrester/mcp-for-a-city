@@ -11,6 +11,12 @@ audience: "Agentic AI Foundation and MCP maintainers, MCP Dev Summit Toronto 202
 
 # Deploying and Operating MCP Servers
 
+> **Correction, 2026-10-06:** the live SDK page now lists Ruby as **Tier 1**
+> (https://modelcontextprotocol.io/docs/sdk, source `docs/docs/2026-07-28/sdk.mdx`,
+> read 2026-10-06). Tier 1 is TypeScript, Python, C#, Go, Rust and Ruby; Tier 2 is
+> Java; Tier 3 is Swift, PHP and Kotlin. The tier table and the Tier 1 count below
+> are updated; Ruby was Tier 2 when this file was first written.
+
 Research for "Governing MCP for a Workforce the Size of a City", MCP Dev Summit
 Toronto, 2026-10-06. Companion to `06-research-and-source-ledger/spec/`, `06-research-and-source-ledger/ops/`,
 `06-research-and-source-ledger/scale/` and `06-research-and-source-ledger/security/` in this repo.
@@ -141,7 +147,7 @@ date, path given per row.
 | Go | 1 | `v1.8.0` | 2026-09-14 | Yes, since `v1.7.0` | `README.md` support matrix |
 | Rust | 1 | `rmcp-v3.4.0` | 2026-09-15 | Yes | `README.md` |
 | Java | 2 | `v2.0.1` | 2026-08-19 | **No** | `CHANGELOG.md` release-line table |
-| Ruby | 2 | `v1.5.1` | 2026-09-09 | Yes | `CHANGELOG.md` 1.4.0, `subscriptions/listen` |
+| Ruby | 1 (2 when first read) | `v1.5.1` | 2026-09-09 | Yes | `CHANGELOG.md` 1.4.0, `subscriptions/listen` |
 | PHP | 3 | `v0.8.1` | 2026-08-29 | Partial, alpha-scored | `README.md` conformance badges |
 | Kotlin | 3 | `0.15.0` | 2026-07-28 | **No** | source constant, below |
 | Swift | 3 | `0.12.1` | 2026-05-07 | **No** | `README.md` |
@@ -192,7 +198,7 @@ verbatim from the tier requirements table, row "New Protocol Features":
 > Tier 3: No timeline commitment
 
 So Java at Tier 2 has until roughly 2027-01-28 and is not late. Kotlin and Swift
-at Tier 3 have no commitment at all. **All five Tier 1 SDKs met their
+at Tier 3 have no commitment at all. **All six Tier 1 SDKs, Ruby included, met their
 obligation.** The honest headline is not "the SDKs are behind"; it is that the
 tiering system makes the lag legible and bounded, and that an organisation
 standardised on Java, Kotlin or Swift cannot adopt `2026-07-28` today through an
@@ -586,7 +592,7 @@ https://modelcontextprotocol.io/community/feature-lifecycle, verbatim:
 >   and the earliest removal date where the mechanism permits.
 > * Should emit a runtime warning when a deprecated feature is exercised
 
-A Java, Kotlin, Swift, Ruby or PHP shop gets neither guarantee. **[UNVERIFIED]:**
+A Java, Kotlin, Swift or PHP shop gets neither guarantee. **[UNVERIFIED]:**
 whether each Tier 1 SDK has actually shipped the deprecation annotations. The
 C# repo has a `src/Common/Obsoletions.cs` matching a `2026-07-28` search and the
 Go README carries a note that "The roots, sampling, and logging features are
