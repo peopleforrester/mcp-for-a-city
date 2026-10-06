@@ -1,10 +1,13 @@
+![Shadow-play city above a gated wall, with a crowd at the gate: Governing MCP for a Workforce the Size of a City](08-shadow-play-art/social-header.png)
+
 # MCP for a City
 
 The resources behind **Governing MCP for a Workforce the Size of a City**, the
 keynote Michael Rishi Forrester gave at MCP Dev Summit Toronto on Tuesday,
 October 6, 2026. The talk is fifteen minutes on what happens when governance
-meets people who route around a no. Its thesis fits in one line: if you do not
-give them MCP servers, they build their own.
+meets people who route around a no. It concludes that the most effective lever
+for governing MCP at this scale is a relationship with the users who consume
+your MCP servers, and it closes on one line: talk to your users.
 
 The interactive version lives at **[mcp.michaelrishiforrester.com](https://mcp.michaelrishiforrester.com/)**,
 where you can walk an MCP server through the six approval gates and take the
