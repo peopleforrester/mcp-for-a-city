@@ -7,6 +7,10 @@ ABOUTME: The README is for visitors; internal pointers belong here. CLAUDE.md is
 
 Test command: `python3 -m unittest discover -s tests -v`
 
+There is deliberately no end-to-end command line: the repo has no end-to-end,
+browser or integration tests against real services, so the test command above
+is the whole gate. Add one only when such a test exists.
+
 ## What this repo is
 
 The public collateral for **Governing MCP for a Workforce the Size of a City**,

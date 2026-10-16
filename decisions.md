@@ -5,6 +5,13 @@ ABOUTME: Check here before reopening a choice; add an entry when a new one is se
 
 # Decisions
 
+## 2026-10-16: No end-to-end command; the link check is the whole gate
+
+The heavy gate runs an end-to-end command only where a repo has end-to-end,
+browser or integration tests against real services. This repo has none: its
+only test is the relative link check, which reads local files. AGENTS.md says
+so instead of declaring a command that would run nothing new. Issue #15.
+
 ## 2026-10-16: The README is for visitors; internal pointers go in AGENTS.md
 
 The README is the repo's public front door. What the repo is, where its working
