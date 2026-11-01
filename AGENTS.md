@@ -7,17 +7,20 @@ ABOUTME: The README is for visitors; internal pointers belong here. CLAUDE.md is
 
 Test command: `python3 -m unittest discover -s tests -v`
 
-There is deliberately no end-to-end command line: the repo has no end-to-end,
-browser or integration tests against real services, so the test command above
-is the whole gate. Add one only when such a test exists.
+The suite under `e2e/` runs the real American English checker from
+`~/repos/workflow/llm-coding-workflow` over the published Markdown and fails on
+any British form. It fails, never skips, when that checkout is missing.
+
+E2E command: `python3 -m unittest discover -s e2e -v`
 
 ## What this repo is
 
 The public collateral for **Governing MCP for a Workforce the Size of a City**,
 the keynote Michael Rishi Forrester gave at MCP Dev Summit Toronto on
 2026-10-06, published as `peopleforrester/mcp-for-a-city`. It is a content repo:
-slides, script, research, art and an article series. The only code is the link
-check in `tests/`.
+slides, script, research, art and an article series. The only code is the
+tests: the link check and the American English opt-in check in `tests/`, and
+the American English run in `e2e/`.
 
 This repo is the published output, not the workshop. Anything about the talk
 that is not a file here (governance, the repo registry, the KRs, working notes)

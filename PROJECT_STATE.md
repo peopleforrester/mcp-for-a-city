@@ -26,7 +26,9 @@ Last reconciled: 2026-10-16.
   | Enterprise checklist | draft, under review |
 
 - Tests: a relative link and image check over every Markdown file
-  (`tests/test_links.py`), standard library only.
+  (`tests/test_links.py`) and a check that `.american-english` lists every
+  Markdown file (`tests/test_american_english.py`), standard library only.
+  The E2E command (`e2e/`) runs the American English checker from `~/repos`.
 - American English: every Markdown file is opted in through
   `.american-english`. The check passed on the whole tree on 2026-11-01.
   How to run it is in [AGENTS.md](AGENTS.md).

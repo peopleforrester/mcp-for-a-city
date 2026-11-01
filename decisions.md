@@ -5,6 +5,18 @@ ABOUTME: Check here before reopening a choice; add an entry when a new one is se
 
 # Decisions
 
+## 2026-11-01: The American English check is tested, and the run is the E2E command
+
+`tests/test_american_english.py` checks that `.american-english` exists, lists
+paths, and covers every Markdown file, reading its globs the way
+`check_american_english.py` does, and that AGENTS.md names the `--published`
+run before a push. Running the checker needs the llm-coding-workflow checkout
+in `~/repos`, so that run is `e2e/test_american_english.py`, which fails when
+the checkout is missing. That makes it the repo's first test that needs
+`~/repos`, so AGENTS.md now declares an E2E command, as the 2026-10-16 entry
+below allowed once such a test existed. The checker is not copied into the
+repo, so its word table cannot drift from the source. Issue #17, from #16.
+
 ## 2026-11-01: Every Markdown file is published writing for the American English check
 
 The repo is public collateral under CC BY 4.0, and pushing it publishes it, so
