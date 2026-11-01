@@ -27,6 +27,9 @@ Last reconciled: 2026-10-16.
 
 - Tests: a relative link and image check over every Markdown file
   (`tests/test_links.py`), standard library only.
+- American English: every Markdown file is opted in through
+  `.american-english`. The check passed on the whole tree on 2026-11-01.
+  How to run it is in [AGENTS.md](AGENTS.md).
 
 ## Next
 

@@ -129,7 +129,7 @@ Three further details that matter for a gateway deployment and are easy to miss:
 > `_meta`. If the values do not match, the server **MUST** reject the request
 > with `400 Bad Request` and a `HeaderMismatch` JSON-RPC error
 
-SEP of record for the header standardisation: SEP-2243,
+SEP of record for the header standardization: SEP-2243,
 https://modelcontextprotocol.io/seps/2243-http-standardization.
 
 ### 0.2 SDK support status, measured 2026-09-18
@@ -200,8 +200,8 @@ verbatim from the tier requirements table, row "New Protocol Features":
 So Java at Tier 2 has until roughly 2027-01-28 and is not late. Kotlin and Swift
 at Tier 3 have no commitment at all. **All six Tier 1 SDKs, Ruby included, met their
 obligation.** The honest headline is not "the SDKs are behind"; it is that the
-tiering system makes the lag legible and bounded, and that an organisation
-standardised on Java, Kotlin or Swift cannot adopt `2026-07-28` today through an
+tiering system makes the lag legible and bounded, and that an organization
+standardized on Java, Kotlin or Swift cannot adopt `2026-07-28` today through an
 official SDK.
 
 **The conformance suite is itself split.** **[MEASURED]** npm registry for
@@ -210,7 +210,7 @@ official SDK.
 tag, `0.1.16`, was released 2026-03-27, four months before the current revision.
 The PHP SDK README states this directly: "The `2026-07-28` scores run against the
 framework's `alpha` releases, so they move as [they change]". So conformance
-against the current revision is, as of 2026-09-18, an alpha artefact.
+against the current revision is, as of 2026-09-18, an alpha artifact.
 
 ---
 
@@ -278,7 +278,7 @@ What exists instead, in descending order of authority:
 4. **[OFFICIAL]** Per-SDK migration documentation, which is where the actual
    procedural guidance lives. See 2.3.
 
-**The gap to name from the stage:** an organisation with a fleet of servers is
+**The gap to name from the stage:** an organization with a fleet of servers is
 handed a compatibility matrix and told to read nine SDK repositories. The
 deprecation policy gives them a schedule (Section 5); nothing gives them a
 method. That is a concrete, fixable, non-hostile ask to put to the room.
@@ -320,7 +320,7 @@ Note the **MAY**. Dual-era operation is permitted, not required, and not
 specified beyond detection.
 
 **The compatibility matrix, reproduced verbatim.** This is the single most
-useful artefact for planning a mixed fleet and belongs on a slide:
+useful artifact for planning a mixed fleet and belongs on a slide:
 
 | Client | Server | Outcome |
 |---|---|---|
@@ -389,7 +389,7 @@ Streamable HTTP page:
 > * A `Last-Event-ID` header: ignore it; streams are not resumable.
 
 Note "ignore it" for `Mcp-Session-Id`. A legacy client sending a session ID gets
-no error, no warning, and stateless behaviour. That is B3's silent failure mode
+no error, no warning, and stateless behavior. That is B3's silent failure mode
 written into the specification.
 
 ### 2.4 The compatibility shims that do exist, at SDK level
@@ -464,8 +464,8 @@ pre-`initialize` requests stalls `connect()` for the full probe timeout".
 
 **The portability trap:** Python is modern-by-default on the client and
 dual-era-always on the server. TypeScript is legacy-by-default on both and
-requires opt-in. A polyglot organisation that upgrades SDK versions uniformly
-will end up with a fleet whose era behaviour depends on which language each
+requires opt-in. A polyglot organization that upgrades SDK versions uniformly
+will end up with a fleet whose era behavior depends on which language each
 team chose. That is a governance problem, not a bug, and it is exactly the kind
 of thing a platform team should pin in policy rather than discover.
 
@@ -601,7 +601,7 @@ systematic check.
 
 ---
 
-## 4. Deprecated features: what an organisation with these in production does
+## 4. Deprecated features: what an organization with these in production does
 
 **[SPEC]** The registry, https://modelcontextprotocol.io/specification/2026-07-28/deprecated
 (verified 2026-09-18). Reproduced verbatim, with the migration paths as written:
@@ -679,7 +679,7 @@ model call outside whatever guardrails the host applied.
 **Logging to stderr and OpenTelemetry.** The most operationally positive. The
 protocol is naming OpenTelemetry by name as the observability path, and
 `2026-07-28` added W3C Trace Context propagation conventions in `_meta`
-(`traceparent`, `tracestate`, `baggage`, SEP-414). An organisation that already
+(`traceparent`, `tracestate`, `baggage`, SEP-414). An organization that already
 runs OTel gets a better answer than it had. One that does not now has to.
 The removal of `logging/setLevel` (B12) is the sharp edge: runtime log-level
 control is gone, replaced by `io.modelcontextprotocol/logLevel` per request, so
@@ -692,7 +692,7 @@ summary: CIMD requires the client to host a JSON document at an HTTPS URL whose
 and CLI clients did not previously have. In exchange, verbatim from the spec:
 "Client IDs based on Client ID Metadata Documents are portable across
 authorization servers [...] No re-registration is needed when the authorization
-server changes." For a large organisation that is the better deal, because the
+server changes." For a large organization that is the better deal, because the
 alternative is now bound by a new rule: clients "**MUST NOT** reuse client
 credentials from a different authorization server and **MUST** re-register with
 the new authorization server."
@@ -752,7 +752,7 @@ covered by clause 1.
 >    * Log tool usage for audit purposes
 
 **Rate limiting is a server MUST.** That is a stronger statement than most MCP
-server implementations honour, and it is one sentence long in a page most people
+server implementations honor, and it is one sentence long in a page most people
 read for schema guidance. Worth putting on a slide verbatim.
 
 And the consent posture, verbatim from the same page:
@@ -812,7 +812,7 @@ CDN; that failure mode is catalogued as F15 in `06-research-and-source-ledger/op
 > Closing the SSE response stream **MUST** be treated by the server as
 > cancellation of that request. Because each request has its own response
 > stream, the transport-level disconnect is unambiguous. The server **SHOULD**
-> stop work on the cancelled request as soon as practical and **MUST NOT** send
+> stop work on the cancelled request as soon as practical and **MUST NOT** send <!-- lexicon: verbatim spec quotation -->
 > any further messages for it.
 
 **[SPEC]** Two proxy-facing requirements that are pure operations guidance and
@@ -917,7 +917,7 @@ And the aggregation warning, which is the one that matters for a gateway, verbat
 > servers and **SHOULD NOT** be relied upon for disambiguation.
 
 Two SHOULDs that together mean: an enterprise MCP gateway has no protocol-provided
-way to name a tool unambiguously across its catalogue, and the obvious
+way to name a tool unambiguously across its catalog, and the obvious
 disambiguator is explicitly disclaimed. The registry namespace
 (`io.github.user/server`) is the nearest thing, and it is preview.
 
@@ -1103,7 +1103,7 @@ scanning outward. **[OFFICIAL]** From the registry docs, quoted in
 
 So the supply-chain answer in the official ecosystem is "npm, PyPI and whoever
 aggregates us". Do not present a container hardening standard as MCP guidance;
-there is not one. Vendor gateway and catalogue approaches (Docker MCP Gateway,
+there is not one. Vendor gateway and catalog approaches (Docker MCP Gateway,
 Stacklok ToolHive, IBM Context Forge, Kong, agentgateway) are catalogued with
 URLs in `06-research-and-source-ledger/scale/mcp-at-scale-architecture-2026-09.md` and are **[VENDOR]**
 by construction.

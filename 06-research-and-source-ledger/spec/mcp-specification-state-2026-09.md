@@ -863,7 +863,7 @@ This is where the enterprise story is weakest, and it is verbatim:
 
 > The MCP Registry is not intended to be directly consumed by host applications. Instead, host applications should consume other MCP registries, such as downstream marketplaces
 
-**Speaker-ready summary:** an enterprise that wants a private catalogue of internal
+**Speaker-ready summary:** an enterprise that wants a private catalog of internal
 MCP servers gets an OpenAPI contract and nothing else. No reference
 implementation it is allowed to run, no support, no federation protocol. The
 sub-registry model is a specification, not a product.
@@ -1061,7 +1061,7 @@ Client support caveat, verbatim:
 **The argument this supports:** MCP's normative core is rigorous about how to do
 authorization correctly and silent about whether to do it at all. Every control
 an enterprise security team would consider mandatory (centralized policy, SSO,
-audit trail, private catalogue, durable execution) sits in an extension, a
+audit trail, private catalog, durable execution) sits in an extension, a
 SHOULD, or nothing. That is a deliberate design choice, stated in the 2026
 roadmap, and it is defensible. It is also the gap a city, a bank, or a hospital
 has to close itself.

@@ -235,7 +235,7 @@ it enforces at the MCP layer, not an independent evaluation.
 - obot and MintMCP: vendor blogs, https://obot.ai/blog/best-mcp-gateways-engineering-teams/ ,
   https://www.mintmcp.com/blog/enterprise-ai-infrastructure-mcp
 
-### 2.2 The governance story is the headline, and it favours the LF room
+### 2.2 The governance story is the headline, and it favors the LF room
 
 Three facts that belong together on a slide:
 
@@ -481,7 +481,7 @@ governance is arriving in the CNCF policy layer rather than only in products.
   ID-JAG-plus-policy implementations in public.
   Source: https://nirmata.com/2026/08/18/okta-cross-app-access-xaa-id-jag/
 
-### 5.4 The division of labour that works
+### 5.4 The division of labor that works
 
 - **Kyverno / OPA Gatekeeper** at Kubernetes admission: which MCP server workloads
   may exist at all.

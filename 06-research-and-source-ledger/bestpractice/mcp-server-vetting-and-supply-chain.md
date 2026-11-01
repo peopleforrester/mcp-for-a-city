@@ -12,9 +12,9 @@ status: draft
 
 > **Note added 2026-10-06, on publication:** This file says Anthropic's connector review criteria are unpublished. They are now published: https://claude.com/docs/connectors/building/review-criteria
 
-Built for the MCP Dev Summit Toronto keynote, 2026-10-06, delivered to the Agentic AI Foundation. Companion to `06-research-and-source-ledger/security/mcp-security-failures-2026-09.md`, which catalogues the failures this document is about preventing.
+Built for the MCP Dev Summit Toronto keynote, 2026-10-06, delivered to the Agentic AI Foundation. Companion to `06-research-and-source-ledger/security/mcp-security-failures-2026-09.md`, which catalogs the failures this document is about preventing.
 
-**Source class convention.** Every source is labelled:
+**Source class convention.** Every source is labeled:
 
 | Label | Meaning |
 |---|---|
@@ -36,7 +36,7 @@ Everything below was read on **2026-09-18** unless stated otherwise. Claims that
 
 This is the single most citable fact in this document, and it comes from the specification repository's own `SECURITY.md`.
 
-**Source:** OFFICIAL. <https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/SECURITY.md>, read 2026-09-18. Summarised at <https://modelcontextprotocol.io/community/security>.
+**Source:** OFFICIAL. <https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/SECURITY.md>, read 2026-09-18. Summarized at <https://modelcontextprotocol.io/community/security>.
 
 The trust model, verbatim:
 
@@ -54,7 +54,7 @@ And the explicit division of responsibility:
 > - Understanding the capabilities of servers they enable
 > - Configuring appropriate access restrictions for their environment
 
-The same document lists behaviours that are **not** eligible as vulnerability reports. Three of them matter directly to anyone designing a review checklist, because they define the floor below which no upstream fix is coming:
+The same document lists behaviors that are **not** eligible as vulnerability reports. Three of them matter directly to anyone designing a review checklist, because they define the floor below which no upstream fix is coming:
 
 1. **Command execution over stdio is a feature.** "Reports about 'arbitrary command execution' via STDIO transport configuration, whether in MCP client applications or SDKs, are not vulnerabilities. Process spawning is a core feature of the STDIO transport mechanism."
 2. **Server capabilities and side effects are features.** "Reports about 'server X can perform action Y' are not vulnerabilities when Y is the server's intended purpose. The appropriate safeguards and permissions for these capabilities are the responsibility of the user or administrator deploying the server."
@@ -98,7 +98,7 @@ It augments SSDF 1.1 for model producers, system producers, and acquirers. It pr
 
 **Source:** OFFICIAL (Cloud Security Alliance). <https://cloudsecurityalliance.org/blog/2025/04/30/threat-modeling-google-s-a2a-protocol-with-the-maestro-framework>, read 2026-09-18.
 
-CSA's MAESTRO threat-modelling framework (published 2026-02-06 per the article's own cross-reference) has been applied to Google's A2A protocol and to the OpenAI Responses API. **No CSA MCP-specific server vetting guidance was located in this session.** Absence of evidence, stated as such.
+CSA's MAESTRO threat-modeling framework (published 2026-02-06 per the article's own cross-reference) has been applied to Google's A2A protocol and to the OpenAI Responses API. **No CSA MCP-specific server vetting guidance was located in this session.** Absence of evidence, stated as such.
 
 ### 1.6 The most complete published checklist is from a security firm, not a standards body
 
@@ -135,7 +135,7 @@ Note the three items under tool and server management. They are the rug-pull con
 
 **Source:** VENDOR. Palo Alto Networks, "Model Context Protocol (MCP): A Security Overview", June 2025, <https://www.paloaltonetworks.com/blog/prisma-cloud/model-context-protocol-mcp-a-security-overview/>, read 2026-09-18.
 
-The operative sentence: "Create a formal approval process for adding new MCP servers to your environment, including security reviews, source verification and documentation." It also recommends an inventory of approved servers and "an internal repository of vetted MCP servers rather than allowing direct installation from public sources." It gives no criteria, no evaluation metrics, and names no organisation that does this.
+The operative sentence: "Create a formal approval process for adding new MCP servers to your environment, including security reviews, source verification and documentation." It also recommends an inventory of approved servers and "an internal repository of vetted MCP servers rather than allowing direct installation from public sources." It gives no criteria, no evaluation metrics, and names no organization that does this.
 
 **Source:** VENDOR. Wiz, "MCP Security Research Briefing", published 2025-04-17, updated 2025-04-21, <https://www.wiz.io/blog/mcp-security-research-briefing>, read 2026-09-18. Nine user-facing recommendations: trusted sources only, audit before use, careful credential handling, client selection, sandboxing, internal registries. One measured data point worth keeping: roughly **100 of the 3,500 servers** listed on glama.ai at the time linked to non-existent repositories. Registry listings drift away from their own source.
 
@@ -199,7 +199,7 @@ A registry that explicitly does not remove servers with security vulnerabilities
 
 Custom publisher metadata lives under `_meta.io.modelcontextprotocol.registry/publisher-provided`, capped at 4096 bytes.
 
-**Security history of the registry itself.** Three advisories in 2026: CVE-2026-44427 (open redirect), CVE-2026-44428 (GitHub OIDC token bound only to a global audience string, so a token minted for one registry was accepted by any other), CVE-2026-44429 (stored XSS in the public catalogue via `server.websiteUrl` in any published `server.json`). Verified in the companion security document on 2026-09-17. The namespace verification layer is itself young code.
+**Security history of the registry itself.** Three advisories in 2026: CVE-2026-44427 (open redirect), CVE-2026-44428 (GitHub OIDC token bound only to a global audience string, so a token minted for one registry was accepted by any other), CVE-2026-44429 (stored XSS in the public catalog via `server.websiteUrl` in any published `server.json`). Verified in the companion security document on 2026-09-17. The namespace verification layer is itself young code.
 
 ### 2.2 Docker MCP Catalog: the only curation with a human review gate and published entry requirements
 
@@ -263,7 +263,7 @@ OFFICIAL, referenced from both the npm and PyPI documentation above. Keyless sig
 
 ## 3. Automated scanning
 
-Three tools exist. Together they cover static description analysis, adversarial probing, and schema and behaviour conformance. None covers code-level vulnerability discovery in the server implementation, which remains a job for ordinary SAST.
+Three tools exist. Together they cover static description analysis, adversarial probing, and schema and behavior conformance. None covers code-level vulnerability discovery in the server implementation, which remains a job for ordinary SAST.
 
 ### 3.1 mcp-scan, now Snyk
 
@@ -322,7 +322,7 @@ A Python CLI that "helps you catch MCP server issues before your agents do". Fou
 
 1. **Constraints.** Provider limits, for example OpenAI's 128-tool ceiling and name-length restrictions.
 2. **Schema and metadata.** Tool definitions, descriptions, structural compliance.
-3. **Functional behaviour.** Optionally executes tools and observes what happens.
+3. **Functional behavior.** Optionally executes tools and observes what happens.
 4. **LLM compatibility.** Uses a model to judge whether tools work well with agents. Marked experimental.
 
 Outputs Markdown and JSON: server info, capabilities, tool statistics, constraint violations, execution results. **It has a `--fail-on-warnings` flag intended for CI/CD**, which makes it the only one of the three with an explicit pipeline gate.
@@ -368,7 +368,7 @@ And minor change 3:
 
 > Servers **SHOULD** return tools from `tools/list` in a deterministic order to enable client-side caching and improve LLM prompt cache hit rates.
 
-A list that does not vary by connection and comes back in a deterministic order is a **hashable artifact**. Under the session-based revisions, a server could legitimately return different tools to different connections, so a hash mismatch was ambiguous between "rug pull" and "normal behaviour". Under 2026-07-28 a mismatch means something changed. Source: OFFICIAL, <https://modelcontextprotocol.io/specification/2026-07-28/changelog>, read 2026-09-18.
+A list that does not vary by connection and comes back in a deterministic order is a **hashable artifact**. Under the session-based revisions, a server could legitimately return different tools to different connections, so a hash mismatch was ambiguous between "rug pull" and "normal behavior". Under 2026-07-28 a mismatch means something changed. Source: OFFICIAL, <https://modelcontextprotocol.io/specification/2026-07-28/changelog>, read 2026-09-18.
 
 ### 4.3 What hashing does not solve
 
@@ -377,7 +377,7 @@ Four gaps, all real:
 1. **A first-look poisoned description passes.** Hashing detects change, not malice. The initial review still has to catch a payload that was there from version one.
 2. **A legitimate update is indistinguishable from a malicious one** without re-reading the diff. The control converts a silent compromise into a review queue, which is progress and is not a solution.
 3. **Remote servers can serve different content to different callers.** Nothing in the protocol prevents a hosted server from returning a clean list to a scanner's IP and a poisoned one to production. The hash is only as good as the vantage point it was taken from.
-4. **Cross-server shadowing needs the whole set, not one server.** Invariant's shadowing attack has server A's description alter the agent's behaviour toward server B. Reviewing each server in isolation cannot see it. The reviewable unit is the **assembled tool set for a given agent**, not the individual server. This is the strongest argument for a gateway that owns the composition.
+4. **Cross-server shadowing needs the whole set, not one server.** Invariant's shadowing attack has server A's description alter the agent's behavior toward server B. Reviewing each server in isolation cannot see it. The reviewable unit is the **assembled tool set for a given agent**, not the individual server. This is the strongest argument for a gateway that owns the composition.
 
 ### 4.4 Allowlisting arguments beats reviewing prose
 
@@ -393,7 +393,7 @@ A one-time review does not survive a server that updates, and the ecosystem upda
 
 ### 5.1 Version pinning is available and the registry supports it
 
-Registry version metadata is immutable once published (OFFICIAL, registry FAQ, read 2026-09-18). npm, PyPI and OCI all support digest pinning. For a containerised server, pin the image digest rather than the tag; for npm, pin the exact version and verify with `npm audit signatures`; for PyPI, pin and verify the PEP 740 attestation.
+Registry version metadata is immutable once published (OFFICIAL, registry FAQ, read 2026-09-18). npm, PyPI and OCI all support digest pinning. For a containerized server, pin the image digest rather than the tag; for npm, pin the exact version and verify with `npm audit signatures`; for PyPI, pin and verify the PEP 740 attestation.
 
 **The counter-fact that must be stated alongside it.** Servers cannot currently be deleted or unpublished from the MCP Registry, and removal only sets `status: "deleted"` while metadata stays readable through the API. A pinned, withdrawn, known-malicious version keeps resolving unless the consuming system acts on `status` itself. Pinning without a revocation check is a pin to a known-bad artifact.
 
@@ -444,7 +444,7 @@ Any policy keyed on client identity needs a real credential. The protocol tells 
 | Required `ttlMs` and `cacheScope` on list and read results | `cacheScope: "public"` permits shared intermediaries to cache. A reviewer must confirm a server does not mark user-scoped data `public`, which would be a cross-tenant leak through the gateway's own cache |
 | Extensions are opt-in via the `extensions` capability map | Extensions are negotiated, not assumed. If one party does not support an extension the other "**MUST** either revert to core protocol behavior or reject the request". Tasks and MCP Apps are separately advertised and separately deniable at the proxy |
 | Sampling, Roots and Logging deprecated (SEP-2577) | Three server-to-client capabilities leave the default surface. Sampling in particular was the "server asks the client's model to generate content" path. Its deprecation shrinks what a reviewer must reason about, over a minimum twelve-month window |
-| OAuth Dynamic Client Registration deprecated in favour of Client ID Metadata Documents | DCR is a precondition of the confused-deputy attack (spec: "MCP proxy server allows MCP clients to dynamically register"). Moving off it removes one of the four required conditions |
+| OAuth Dynamic Client Registration deprecated in favor of Client ID Metadata Documents | DCR is a precondition of the confused-deputy attack (spec: "MCP proxy server allows MCP clients to dynamically register"). Moving off it removes one of the four required conditions |
 | `$ref` network dereferencing **MUST** be disabled by default | Closes an SSRF path through tool schemas. An opt-in mode "**MUST** be disabled by default" and **SHOULD** enforce a host allowlist |
 | Composition-keyword bounds | Servers **SHOULD** bound schema depth and subschema count so a malicious schema is not a DoS against the validator |
 
@@ -470,11 +470,11 @@ So the revocation path is: upstream package registry takedown, then aggregator r
 
 ## 6. Internal servers versus third party
 
-**This is the weakest-evidenced section in the document, and the weakness is the finding.** No published internal MCP publishing pipeline from a named organisation was located in this session.
+**This is the weakest-evidenced section in the document, and the weakness is the finding.** No published internal MCP publishing pipeline from a named organization was located in this session.
 
 ### 6.1 What is genuinely different
 
-Derived from the controls established above rather than from a published source, and labelled as synthesis:
+Derived from the controls established above rather than from a published source, and labeled as synthesis:
 
 | Dimension | Third-party server | Internal server |
 |---|---|---|
@@ -501,7 +501,7 @@ An internal server is not automatically safer. It is subject to controls at a po
 
 ### 6.3 What happens when the author leaves
 
-**No published guidance exists on MCP server ownership lifecycle.** Not from the MCP project, not from any of the practitioner accounts read. The registry's namespace model actively complicates it: a server published under `io.github.alice/*` is bound to Alice's personal GitHub account, and an organisation namespace requires the org, so a server published under an individual's namespace has no transfer path short of republishing under a new name. Combined with the inability to unpublish, an abandoned server stays listed, stays resolvable, and stays attributable to someone who has left.
+**No published guidance exists on MCP server ownership lifecycle.** Not from the MCP project, not from any of the practitioner accounts read. The registry's namespace model actively complicates it: a server published under `io.github.alice/*` is bound to Alice's personal GitHub account, and an organization namespace requires the org, so a server published under an individual's namespace has no transfer path short of republishing under a new name. Combined with the inability to unpublish, an abandoned server stays listed, stays resolvable, and stays attributable to someone who has left.
 
 This is a real, concrete, unaddressed gap and it is worth thirty seconds from the stage.
 
@@ -540,7 +540,7 @@ Assembled from the sources above. This is a **synthesis**: no single published s
 | 2.1 | For every tool, read the `inputSchema` and ask: what is the worst outcome if every string argument is attacker-chosen? | SYNTHESIS, from CVE-2026-47250 (`kubectl_generic` flag pass-through) |
 | 2.2 | Reject free-form pass-through to a CLI or shell. Require an argument allowlist, not a blocklist | OFFICIAL, GHSA-6mx4-4h42-r8vh; SlowMist "strictly validate all inputs from clients" (High) |
 | 2.3 | Enumerate the credentials the server requires from `server.json` env vars, including which are marked secret. Reject any credential that bypasses row-level or tenant isolation | OFFICIAL, server.json reference; worked example: the Supabase `service_role` leak |
-| 2.4 | Require least-privilege scopes. Reject `*`, `all`, `full-access`, or a server that publishes its entire catalogue in `scopes_supported` | OFFICIAL, spec security best practices, "Common Mistakes" |
+| 2.4 | Require least-privilege scopes. Reject `*`, `all`, `full-access`, or a server that publishes its entire catalog in `scopes_supported` | OFFICIAL, spec security best practices, "Common Mistakes" |
 | 2.5 | Confirm the server does not accept tokens issued for anything else. "MCP servers **MUST NOT** accept any tokens that were not explicitly issued for the MCP server" | OFFICIAL, spec, normative |
 | 2.6 | Confirm state handles are non-deterministic and bound server-side to the authenticated user, keyed as `<user_id>:<handle>`. Possession of a handle **MUST NOT** be treated as authentication | OFFICIAL, spec 2026-07-28, State Handle Hijacking |
 | 2.7 | If the server proxies a third-party API: confirm per-client consent stored server-side and checked **before** the third-party flow, exact-string `redirect_uri` matching with no wildcards, and single-use `state` stored only after consent approval | OFFICIAL, spec confused deputy section, all **MUST** |
@@ -578,13 +578,13 @@ Assembled from the sources above. This is a **synthesis**: no single published s
 |---|---|---|
 | 5.1 | CI diffs `tools/list` against a committed manifest on every pull request, so 4.2 becomes prevention rather than detection | SYNTHESIS |
 | 5.2 | Build at SLSA L2 minimum, L3 for anything with production credentials | OFFICIAL, SLSA levels |
-| 5.3 | Publish under an **organisation** namespace, never an individual's `io.github.<person>`, because there is no transfer path and no unpublish | OFFICIAL, registry authentication and FAQ; SYNTHESIS for the conclusion |
+| 5.3 | Publish under an **organization** namespace, never an individual's `io.github.<person>`, because there is no transfer path and no unpublish | OFFICIAL, registry authentication and FAQ; SYNTHESIS for the conclusion |
 | 5.4 | Record a named owning team, and a review trigger on owner departure | SYNTHESIS. No published guidance exists on this |
 | 5.5 | Bundle the approved internal set by default so the curated path is the easy path | PRACTITIONER, Block: 100+ internal servers bundled by default |
 
 ---
 
-## 8. What organisations actually do: the evidence is close to absent, and that is the finding
+## 8. What organizations actually do: the evidence is close to absent, and that is the finding
 
 Stated plainly, because an audience that stewards MCP will know it and will respect it being said.
 
@@ -592,17 +592,17 @@ Stated plainly, because an audience that stewards MCP will know it and will resp
 
 **What was found, in full:**
 
-| Organisation | What is published | What is not |
+| Organization | What is published | What is not |
 |---|---|---|
 | Docker | A real human review gate, a license bar, a CI requirement, signing, provenance and SBOM on Docker-built images | The security criteria the review applies |
 | Anthropic | A submission form, cross-platform test requirement, review for "quality and security", enterprise blocklists and private directories | Any criteria, any audit procedure, any re-review trigger |
 | MCP Registry | Cryptographic namespace ownership proof, a moderation policy | Security review of any kind, stated as a deliberate delegation |
-| Block | 100+ internal servers bundled by default; a server design playbook | Any review, approval, catalogue, or ownership process |
+| Block | 100+ internal servers bundled by default; a server design playbook | Any review, approval, catalog, or ownership process |
 | Microsoft | An engineering account of one server; MCP Interviewer as a public tool | Any internal approval process for that server |
 
-**Nobody has published their MCP server review checklist.** Not a bank, not a hyperscaler, not a government. Not one named organisation has written down the criteria it applies before approving a third-party MCP server for production.
+**Nobody has published their MCP server review checklist.** Not a bank, not a hyperscaler, not a government. Not one named organization has written down the criteria it applies before approving a third-party MCP server for production.
 
-**What that absence means, and what it does not.** It does not mean nobody is doing this. Enterprises rarely publish control documents, and the tooling vendors selling MCP gateways plainly have customers. It does mean that a team standing up this process in 2026 has no worked example to copy, no peer benchmark to measure against, and no regulator-recognised baseline to point at. Every organisation is deriving the same checklist independently from the same primary sources, which is the condition a foundation exists to fix.
+**What that absence means, and what it does not.** It does not mean nobody is doing this. Enterprises rarely publish control documents, and the tooling vendors selling MCP gateways plainly have customers. It does mean that a team standing up this process in 2026 has no worked example to copy, no peer benchmark to measure against, and no regulator-recognized baseline to point at. Every organization is deriving the same checklist independently from the same primary sources, which is the condition a foundation exists to fix.
 
 **The ask that follows.** The MCP Registry's own documentation names the gap and assigns it: security scanning belongs to "downstream aggregators", and moderation belongs to "subregistries". Those layers have been designated and, on the published record, largely not built. A vetting profile, a machine-readable review attestation attached to a `server.json`, and a revocation feed are three artifacts that do not exist and that only a steward can credibly create. The talk can make that ask specifically, to a room that could act on it.
 
@@ -616,7 +616,7 @@ Not to be spoken as fact:
 - **Specific NIST SP 800-218A practice identifiers.** Only the landing page was read.
 - **Any Semgrep or CodeQL MCP-specific ruleset.** The Semgrep URL tried returned 404. No ruleset confirmed.
 - **MCPSafetyScanner detection rates.** The abstract publishes none and the full paper was not read.
-- **Whether mcp-scan still transmits tool descriptions to a third party under Snyk.** The pre-acquisition README said it did for static scanning. Current behaviour unconfirmed.
+- **Whether mcp-scan still transmits tool descriptions to a third party under Snyk.** The pre-acquisition README said it did for static scanning. Current behavior unconfirmed.
 - **Anthropic's connectors directory review criteria.** The support article returned 404 on 2026-09-18.
 - **CSA MCP-specific guidance.** None located. Claim absence, not existence.
 - **Any named enterprise's internal MCP vetting process.** None found. This is stated as a finding in section 8, not hedged into a claim that one exists.

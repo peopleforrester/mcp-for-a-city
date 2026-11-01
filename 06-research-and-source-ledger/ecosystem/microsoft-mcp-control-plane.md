@@ -13,7 +13,7 @@ status: draft
 Speaker preparation for "Governing MCP for a Workforce the Size of a City", MCP
 Dev Summit Toronto, 2026-10-06.
 
-Everything below is **[VENDOR]** unless otherwise labelled. Microsoft
+Everything below is **[VENDOR]** unless otherwise labeled. Microsoft
 documentation about Microsoft products is the least independent category of
 evidence there is. It is used here because the question is what Microsoft ships,
 which only Microsoft can answer, and because the one candid limitation in the
@@ -36,7 +36,7 @@ roadmap sentence is never treated as a shipped feature.
 ## The one-paragraph version
 
 Microsoft does not have one MCP control plane. It has **two**, built by
-different organisations, with different scopes, and a large Microsoft-centric
+different organizations, with different scopes, and a large Microsoft-centric
 enterprise will probably have both without anyone having decided to. The Azure
 side is Azure API Management plus Azure API Center plus Microsoft Foundry
 Toolbox, and it governs servers and agents the platform team builds. The
@@ -93,9 +93,9 @@ page:
 > [workspaces](https://learn.microsoft.com/en-us/azure/api-management/workspaces-overview).
 
 The workspaces exclusion matters more than it looks. Workspaces are how large
-APIM estates delegate API ownership to federated teams. An organisation that
-adopted workspaces for its API programme cannot use them for its MCP programme
-today, which means the MCP estate is centralised whether or not that was the
+APIM estates delegate API ownership to federated teams. An organization that
+adopted workspaces for its API program cannot use them for its MCP program
+today, which means the MCP estate is centralized whether or not that was the
 plan.
 
 There is also an opt-in early-access channel, which is a useful thing to know
@@ -161,7 +161,7 @@ Section 6.3 treats that as the federation gap it is.
 ## 1.3 Microsoft Foundry Toolbox: the aggregating endpoint
 
 This is the piece most likely to be missed, because it was renamed. The page
-titled "tool catalog" now canonicalises to **Toolbox**, at
+titled "tool catalog" now canonicalizes to **Toolbox**, at
 `/azure/foundry/agents/concepts/toolbox-overview`, and "Azure AI Foundry" is now
 "Microsoft Foundry". Doc `ms.date` 2026-07-28.
 Source: https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/toolbox-overview
@@ -177,7 +177,7 @@ Toolbox is an aggregating MCP gateway by another name:
 banner. Two of its headline capabilities do: **Tool search (preview)** and
 **Skills (preview)**. Tool search is the token-economics answer, hiding tools
 behind two meta-tools `tool_search` and `call_tool`, and it is the feature an
-organisation with hundreds of tools will actually need. It is in preview.
+organization with hundreds of tools will actually need. It is in preview.
 
 Four GA capabilities, in Microsoft's words: single endpoint, centralized
 authentication ("credential injection, token refresh, and policy enforcement at
@@ -374,7 +374,7 @@ MicrosoftGraphActivityLogs
 | project RequestId, TimeGenerated, UserId, RequestMethod, RequestUri, ResponseStatusCode
 ```
 
-That appId is a usable detection signal today for an organisation that has not
+That appId is a usable detection signal today for an organization that has not
 decided whether it wants this server in use.
 
 ## 1.7 Two open-source Microsoft gateways, neither of them a product
@@ -415,7 +415,7 @@ the only published Microsoft approach that even gestures at the composition
 problem a gateway structurally cannot see. It is a research prototype and should
 be described as exactly that.
 
-## 1.8 The public catalogues
+## 1.8 The public catalogs
 
 **GitHub MCP Registry**, `https://github.com/mcp`. Listed **252 MCP servers** at
 the time of reading, 2026-09-18. **[MEASURED]** Described on the page as "Servers
@@ -427,8 +427,8 @@ relationship to the official MCP registry, and no enterprise administration
 story.** **[UNVERIFIED]** for all four. That absence is the finding. It is
 relevant because the VS Code `chat.mcp.access` policy value `registry` restricts
 developers to "the configured registry", and the default gallery is GitHub's.
-An organisation that sets `registry` without also setting
-`McpGalleryServiceUrl` has narrowed its developers to a catalogue whose admission
+An organization that sets `registry` without also setting
+`McpGalleryServiceUrl` has narrowed its developers to a catalog whose admission
 criteria are not published.
 
 **`mcp.azure.com`** returns HTTP 200 and a document whose only server-rendered
@@ -518,10 +518,10 @@ Two sentences, adjacent, on both Entra Agent ID pages:
 > Purview Suite).
 
 So the identity object is universal and the governance of it is licensed. An
-organisation can be creating agent identities at scale, today, with no Conditional
+organization can be creating agent identities at scale, today, with no Conditional
 Access for agents, no Identity Protection risk detection for agents, no identity
 governance and no network controls for agents, because those require an Agent 365
-licence per user. "We have Entra Agent ID" and "our agents are governed" are
+license per user. "We have Entra Agent ID" and "our agents are governed" are
 different statements, and the first does not imply the second.
 
 ## 2.3 MCP, and the three standards questions
@@ -557,7 +557,7 @@ bad thing to assert from a stage.
 **RFC 8707, Resource Indicators.** No Microsoft documentation referencing RFC
 8707 or `resource` indicators in an MCP context was found in this pass.
 **[UNVERIFIED].** Absence of evidence here is weak evidence: Entra's token
-endpoint behaviour around audience restriction is documented elsewhere under
+endpoint behavior around audience restriction is documented elsewhere under
 different names, and this research did not chase it. Do not claim Microsoft lacks
 it. Claim only that it is not documented for MCP.
 
@@ -797,7 +797,7 @@ Source: https://learn.microsoft.com/en-us/microsoft-365/admin/manage/manage-tool
 `1.1.165-preview` or greater for the registration flow.
 
 It runs a five-step pipeline: discover tools via `tools/list`, generate a
-checklist, run semantic evaluation, analyse, write reports. Checks are of two
+checklist, run semantic evaluation, analyze, write reports. Checks are of two
 kinds, "Deterministic: Rule-based logic in the CLI" and "Semantic: Scored by the
 coding agent, with a `reason` string explaining the judgment". Output is an
 overall score 0 to 100, a maturity level 0 to 4, per-tool category scores across
@@ -857,7 +857,7 @@ key documented between them.
 genuine runtime revocation, not a poll-interval revocation. Compare that with the
 official registry, where, per the companion research, "your revocation latency is
 your poll interval" and downstream aggregators only "may" remove a deleted
-server. And Entra centralised revocation applies to the agent identity itself.
+server. And Entra centralized revocation applies to the agent identity itself.
 
 **The two edges.** First, "Microsoft doesn't currently support deleting a BYO MCP
 server", so the registry only grows and block is the sole remedy. Second, the
@@ -877,7 +877,7 @@ being Microsoft registries of MCP servers in the same tenant.
 
 For a city-sized workforce with many business units, this is the gap with the
 largest operational consequence: there is no documented Microsoft answer to "each
-division runs its own catalogue and the centre needs a view across them."
+division runs its own catalog and the center needs a view across them."
 **[UNVERIFIED]** that such a mechanism exists undocumented.
 
 ## 6.4 Tool-argument policy: absent from every GA Microsoft product
@@ -902,8 +902,8 @@ except Agent Router's `request.mcp.params`.
 
 ## 6.5 Sequence correlation: absent, and Microsoft says so
 
-Section 4.1. The only Microsoft artefact that even addresses composition is
-`fides-gateway`, a research prototype, and information-flow labelling is a
+Section 4.1. The only Microsoft artifact that even addresses composition is
+`fides-gateway`, a research prototype, and information-flow labeling is a
 different and more ambitious mechanism than temporal policy. AWS's Dogwood
 session-aware temporal conditions remain the only published engine that reaches
 past a single call, and as the companion research notes, that too is bounded to
@@ -913,7 +913,7 @@ one session, one gateway, one vendor.
 
 **The two control planes do not govern each other.** Agent 365 explicitly does
 not cover Foundry agents. Foundry Toolbox does not appear in the M365 admin
-center registry. An organisation running both has two governance boundaries and
+center registry. An organization running both has two governance boundaries and
 no documented reconciliation. Nobody's slide shows this.
 
 **Preview concentration in exactly the load-bearing features.** The GA parts are
@@ -961,7 +961,7 @@ All verified 2026-09-18.
 - Enterprise-Managed Authorization: https://modelcontextprotocol.io/extensions/auth/enterprise-managed-authorization
 - PR #3306, IdP support for EMA: https://github.com/modelcontextprotocol/modelcontextprotocol/pull/3306
 
-**Catalogues**
+**Catalogs**
 - https://github.com/mcp
 - https://mcp.azure.com
 
@@ -993,7 +993,7 @@ Kept rather than dropped, because the absence is the finding.
 | Claim | Status |
 |---|---|
 | Microsoft Entra ID issues ID-JAGs for Enterprise-Managed Authorization | **[UNVERIFIED]**. Asserted in an open, unmerged MCP docs PR. No Microsoft source found |
-| Any Microsoft product implements RFC 9728 protected resource metadata for MCP as a feature | **[UNVERIFIED]**. Samples and labs only, one labelled Experimental |
+| Any Microsoft product implements RFC 9728 protected resource metadata for MCP as a feature | **[UNVERIFIED]**. Samples and labs only, one labeled Experimental |
 | Any Microsoft support for RFC 8707 resource indicators in an MCP context | **[UNVERIFIED]**. No documentation found; absence of evidence only |
 | What `mcp.azure.com` contains, who publishes it, its governance model | **[UNVERIFIED]**. Client-rendered; title only |
 | GitHub MCP Registry admission criteria, publisher verification, enterprise controls | **[UNVERIFIED]**. Not published on the page |

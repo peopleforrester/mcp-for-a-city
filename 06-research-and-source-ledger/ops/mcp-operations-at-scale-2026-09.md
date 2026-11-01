@@ -92,9 +92,9 @@ They enforce a hard output guard: files over 400kB raise a tool execution error,
 **[SECONDHAND]** All Things Open, 2025-12-02.
 <https://allthingsopen.org/articles/block-scaled-mcp-12000-employees-15-job-functions>
 
-Reports 12,000 employees, 15 job functions, 100+ internal MCP servers, two months to enterprise-wide rollout, 75% of engineers within one month saving 8 to 10 hours weekly, and 80,000 sales leads analysed in an hour. Treat the productivity figures as company-reported.
+Reports 12,000 employees, 15 job functions, 100+ internal MCP servers, two months to enterprise-wide rollout, 75% of engineers within one month saving 8 to 10 hours weekly, and 80,000 sales leads analyzed in an hour. Treat the productivity figures as company-reported.
 
-What it adds that the Block posts do not: the named adoption failures. Non-technical teams could not install servers. Employees did not understand API key management. Users could not locate the tool they needed. Their mitigations were auto-installation through an internal software centre, OAuth via the identity provider, and **dynamic context management that enables and disables servers per user query** (which is the same pattern the spec now calls dynamic server management).
+What it adds that the Block posts do not: the named adoption failures. Non-technical teams could not install servers. Employees did not understand API key management. Users could not locate the tool they needed. Their mitigations were auto-installation through an internal software center, OAuth via the identity provider, and **dynamic context management that enables and disables servers per user query** (which is the same pattern the spec now calls dynamic server management).
 
 The 60+ versus 100+ discrepancy is most likely seven months of growth, not an error. Cite the dated figure you need.
 
@@ -109,7 +109,7 @@ This is the most quotable single sentence in the entire corpus for the breaking-
 
 A parameter rename. Not a removal, not a semantic change. 2 to 5% of traffic.
 
-Their conclusion generalises the lesson: **"Defensive evolution is part of operating a public service."** Despite MCP's dynamic discovery model, expect hardcoded callers.
+Their conclusion generalizes the lesson: **"Defensive evolution is part of operating a public service."** Despite MCP's dynamic discovery model, expect hardcoded callers.
 
 Design decisions worth noting: three tools only (`microsoft_docs_search`, `microsoft_docs_fetch`, `microsoft_code_sample_search`), deliberately collapsing an underlying service with topK, index selection, thresholds, OData filters, and vector-versus-hybrid search into search-and-fetch. Their principle: "Design tools for the agent workflow, not to mirror internal APIs."
 
@@ -171,7 +171,7 @@ The most quotable critique, and the one that reframes the whole stateless debate
 
 His argument: "Connection state has become context-window state. It costs tokens on every turn it survives, it competes with everything else in the window." And on resumability: "For a thirty second retrieval over a flaky mobile link, the work is thrown away and repeated from zero."
 
-He summarises the accounting as: "If handles accumulate in context and every dropped connection replays a slow tool call, the win at the HTTP layer is being financed somewhere harder to see."
+He summarizes the accounting as: "If handles accumulate in context and every dropped connection replays a slow tool call, the win at the HTTP layer is being financed somewhere harder to see."
 
 This is not a claim that the spec is wrong. He positions the tradeoffs as deliberate. It is a claim that the bill moved from the infrastructure budget to the token budget, and that the two are owned by different people.
 
@@ -296,7 +296,7 @@ Two crawls were run. Results as of 19:23 UTC+2 on 2026-09-17, with the crawl sti
 | Published server-version records | **at least 28,000** | crawl not yet exhausted |
 | Distinct server names | **2,660 within the first 7,500 records** | ratio ~2.8 versions per server |
 
-Applying that ratio to the record floor puts the registry on the order of **10,000 distinct servers**, which is an estimate and is labelled as one. Anyone quoting a registry figure should re-run the crawl to completion and state which of the three numbers they mean: version records, distinct servers, or an estimate derived from a ratio.
+Applying that ratio to the record floor puts the registry on the order of **10,000 distinct servers**, which is an estimate and is labeled as one. Anyone quoting a registry figure should re-run the crawl to completion and state which of the three numbers they mean: version records, distinct servers, or an estimate derived from a ratio.
 
 Set that against the two large public directories counted the same day: PulseMCP at 21,880 and Glama at 88,809. **Three sources, same day, spanning roughly an order of magnitude.** Each is counting something different and none of them is wrong.
 
@@ -304,7 +304,7 @@ The practical consequence for anyone building an enterprise sub-registry: the up
 
 ### 3.4 Cost
 
-Published cost figures for MCP specifically are thin. Most of what circulates is token counts, which are inputs to a cost, not a cost. The arithmetic below is **derived by this research** from two published inputs and is labelled as such.
+Published cost figures for MCP specifically are thin. Most of what circulates is token counts, which are inputs to a cost, not a cost. The arithmetic below is **derived by this research** from two published inputs and is labeled as such.
 
 **Published inputs** (both retrieved 2026-09-17):
 - Anthropic's measured five-server tool-definition load: ~55,000 tokens. <https://www.anthropic.com/engineering/advanced-tool-use>
@@ -338,7 +338,7 @@ A naive progressive-discovery implementation that mutates the `tools` array per 
 - AIMultiple measured ~7% latency increase per call under code execution (10.37s vs 9.66s), because the agent generates more output tokens of code. Output tokens are 5x input on Opus 5, so a code-execution win on input can be partly eaten on output. [SECONDHAND, via multiple summaries; the AIMultiple original was not read directly]
 - Bifrost: 92.8% input-token reduction at 508 tools across 16 MCP servers, and 11 microseconds of gateway overhead per request at 5,000 rps. [VENDOR, Maxim AI]
 - AWS: a two-node ElastiCache session store is about $23/month. [PRIMARY]
-- Code execution tool billing, for reference when sandboxing MCP calls: 1,550 free container-hours per organisation per month, then $0.05 per hour per container. [PRIMARY, Anthropic pricing]
+- Code execution tool billing, for reference when sandboxing MCP calls: 1,550 free container-hours per organization per month, then $0.05 per hour per container. [PRIMARY, Anthropic pricing]
 
 ---
 
@@ -384,7 +384,7 @@ Both teams independently concluded: design top-down from workflows, not bottom-u
 
 ### 4.5 Namespacing
 
-Anthropic's guidance, from running evals on human-written versus optimised Slack and Asana servers: prefix-based (`asana_search`) or suffix-based both work, "Effects vary by LLM," test in your own evals. The payoff is stated as dual: "By selectively implementing tools whose names reflect natural subdivisions of tasks, you simultaneously reduce the number of tools and tool descriptions loaded into the agent's context."
+Anthropic's guidance, from running evals on human-written versus optimized Slack and Asana servers: prefix-based (`asana_search`) or suffix-based both work, "Effects vary by LLM," test in your own evals. The payoff is stated as dual: "By selectively implementing tools whose names reflect natural subdivisions of tasks, you simultaneously reduce the number of tools and tool descriptions loaded into the agent's context."
 
 Note the honest bit that vendor content omits: they do not claim a universal winner between prefix and suffix. <https://www.anthropic.com/engineering/writing-tools-for-agents>
 
@@ -431,7 +431,7 @@ They add a qualitative step that is easy to skip and is where the real findings 
 
 **Tooling named by practitioners:** the MCP Interviewer, used by the Microsoft Learn team for schema validation, and Microsoft Research's "tool space interference" guidance. The MCP Inspector ships in three forms (web, CLI, TUI) with documented exit codes and CI recipes, which makes the CLI the obvious basis for an automated approval gate. <https://modelcontextprotocol.io/docs/2026-07-28/tools/inspector/cli.md>
 
-**Existing benchmarks usable as an external yardstick:** MCP-Universe (11 real MCP servers, 6 domains, open-source harness with UI), MCPToolBench++ (built on a 4,000+ server marketplace across 40+ categories), MCP-Bench, MCP-RADAR. MCPToolBench++ makes the point an enterprise gate needs to internalise: "unlike existing tool-use benchmarks with high success rates in functions like programming and math functions, the success rate of real-world MCP tool is not guaranteed and varies across different MCP servers."
+**Existing benchmarks usable as an external yardstick:** MCP-Universe (11 real MCP servers, 6 domains, open-source harness with UI), MCPToolBench++ (built on a 4,000+ server marketplace across 40+ categories), MCP-Bench, MCP-RADAR. MCPToolBench++ makes the point an enterprise gate needs to internalize: "unlike existing tool-use benchmarks with high success rates in functions like programming and math functions, the success rate of real-world MCP tool is not guaranteed and varies across different MCP servers."
 
 **A defensible operational SLI set for an internal MCP server**, assembled from the above rather than invented:
 
@@ -445,7 +445,7 @@ They add a qualitative step that is easy to skip and is where the real findings 
 
 ---
 
-## 6. Organisational gotchas
+## 6. Organizational gotchas
 
 This section is the weakest evidentially, and that is itself the finding. **Almost everything published about MCP governance is vendor marketing, and none of it names an incident.** The Maxim AI piece, reviewed for this research, "describes the threat model but provides no documented incidents, breach reports, or real-world compromise cases. No organizations are named as affected."
 
@@ -459,10 +459,10 @@ What can be said with sourcing:
 
 **Local stdio bypasses central controls.** This is structural rather than anecdotal: a stdio server is a child process on a laptop. There is no gateway in the path, no TLS to inspect, no load balancer to instrument, and the process's failure mode is a closed pipe [PRIMARY, pgEdge]. The spec's programmatic-tool-calling guidance is explicit that a host broker intercepting calls "over an in-process or stdio channel (so network permissions can stay fully denied)" is the control point, which is an admission that the control has to live in the host, because it cannot live in the network.
 
-**Client fragmentation.** MCP names Claude, ChatGPT, VS Code, Cursor, and MCPJam among supported clients, each with its own configuration file, its own trust model, and its own tool-loading behaviour. Two pieces of evidence, neither of them anecdotal:
+**Client fragmentation.** MCP names Claude, ChatGPT, VS Code, Cursor, and MCPJam among supported clients, each with its own configuration file, its own trust model, and its own tool-loading behavior. Two pieces of evidence, neither of them anecdotal:
 
 1. The official client best-practices document *recommends* progressive discovery with a suggested 1% to 5% threshold rather than specifying it. Each host decides independently when to stop loading tools, so two employees on two clients hitting the same server get different tool surfaces and different bills. [PRIMARY, by inference from the guidance being advisory]
-2. **[MEASURED-HERE, 2026-09-17]** There is no published per-client feature support matrix. The full docs index at `llms.txt` was searched; the 2026-07-28 docs carry `learn/client-concepts`, `develop/build-client` and `develop/clients/client-best-practices`, and nothing enumerating which client supports which feature. A platform team standardising on a client set has to determine this empirically.
+2. **[MEASURED-HERE, 2026-09-17]** There is no published per-client feature support matrix. The full docs index at `llms.txt` was searched; the 2026-07-28 docs carry `learn/client-concepts`, `develop/build-client` and `develop/clients/client-best-practices`, and nothing enumerating which client supports which feature. A platform team standardizing on a client set has to determine this empirically.
 
 **Ownership decay after the author changes team.** No published source found. Mark as **[UNVERIFIED]**. If the talk asserts it, assert it as an observation from the room, not as a cited finding.
 

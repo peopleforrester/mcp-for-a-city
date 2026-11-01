@@ -149,7 +149,7 @@ Versions retrieved live from the GitHub releases API on 2026-09-18.
 
 | Platform | License | Current version | Deployment | Source |
 |---|---|---|---|---|
-| **Langfuse** | MIT core, separate commercial licence for a smaller EE set | **v4.38.0**, published 2026-09-17T15:26:11Z | Self-host or cloud | OFFICIAL, <https://api.github.com/repos/langfuse/langfuse/releases/latest> |
+| **Langfuse** | MIT core, separate commercial license for a smaller EE set | **v4.38.0**, published 2026-09-17T15:26:11Z | Self-host or cloud | OFFICIAL, <https://api.github.com/repos/langfuse/langfuse/releases/latest> |
 | **Arize Phoenix** | Open source | **v20.14.0**, published 2026-09-18 | Self-host or cloud | OFFICIAL, <https://github.com/Arize-ai/phoenix/releases> |
 | **Braintrust** | Commercial | n/a | Cloud, with on-prem or hosted for Enterprise only | VENDOR, <https://www.braintrust.dev/pricing> |
 | **LangSmith** | Commercial | n/a | Cloud, Enterprise self-host | VENDOR, <https://www.langchain.com/pricing-langsmith> |
@@ -168,8 +168,8 @@ self-hosting". [VENDOR,
 <https://clickhouse.com/blog/clickhouse-acquires-langfuse-open-source-llm-observability>;
 corroborated SECONDHAND by
 <https://siliconangle.com/2026/01/16/database-maker-clickhouse-raises-400m-acquires-ai-observability-startup-langfuse/>.]
-The commitment is a vendor statement about future behaviour, not a licence term,
-and should be read as such. The MIT licence on the core is the enforceable part.
+The commitment is a vendor statement about future behavior, not a license term,
+and should be read as such. The MIT license on the core is the enforceable part.
 
 Vendor-reported adoption figures from the same post, presented as the vendor's
 claim rather than as fact: "more than 2,000 paying customers, 26M+ SDK installs
@@ -177,8 +177,8 @@ per month, trusted by 19 of the Fortune 50 and 63 of the Fortune 500."
 
 **Arize Phoenix and OpenInference.** Phoenix consumes OpenInference traces, an
 instrumentation convention Arize also authors, which is a different vocabulary
-from the OTel GenAI conventions in 1.1. An enterprise standardising on OTel GenAI
-and an enterprise standardising on OpenInference are not emitting the same
+from the OTel GenAI conventions in 1.1. An enterprise standardizing on OTel GenAI
+and an enterprise standardizing on OpenInference are not emitting the same
 attribute names. That both ride OpenTelemetry transport does not make them
 interchangeable at the query layer. [Instrumentation relationship: VENDOR,
 <https://arize.com/phoenix/>, read 2026-09-18. The specific degree of attribute
@@ -208,7 +208,7 @@ included volume both say "then pay-as-you-go".
 pages were checked: the pricing page, `/pricing`, and
 `docs.langchain.com/langsmith/usage-and-billing`. The docs page carries a pricing
 table whose price column reads "See pricing page", and the pricing page does not
-itemise it. The commonly cited $2.50 per 1,000 base traces and $5.00 per 1,000
+itemize it. The commonly cited $2.50 per 1,000 base traces and $5.00 per 1,000
 extended traces are **SECONDHAND** (multiple third-party pricing explainers) and
 could not be confirmed against a LangChain-controlled page on 2026-09-18.
 
@@ -284,7 +284,7 @@ but do not put the number in a capacity plan without measuring your own traces.
 ### 1.4 What signals actually drive action
 
 Synthesis, not a cited claim. Of everything the conventions in 1.1 permit, four
-signals change behaviour and the rest are context:
+signals change behavior and the rest are context:
 
 1. **`error.type = tool_error` rate per `gen_ai.tool.name`.** A tool failing
    inside successful JSON-RPC is invisible to transport monitoring and is the
@@ -330,7 +330,7 @@ The registry delegates security scanning outward (already quoted in
 evaluation to nobody at all. An enterprise gate is therefore something the
 enterprise builds. What exists to build it with:
 
-| Tool | Licence | What it does | Source |
+| Tool | License | What it does | Source |
 |---|---|---|---|
 | **mcp-eval** (lastmile-ai) | Apache 2.0 | Acts as a real MCP client against a real server with a real model. Asserts on content (substring, regex), tool calls, sequences, success rates, response-time and iteration caps, LLM-judge rubrics, and path efficiency including backtracking detection. Ships GitHub Actions, GitLab CI, PR comments, JSON/HTML/Markdown output. | PRACTITIONER/OFFICIAL project, <https://github.com/lastmile-ai/mcp-eval>, read 2026-09-18 |
 | **MCPBench** (modelscope) | Open source | Benchmark over MCP servers | PRACTITIONER, <https://github.com/modelscope/MCPBench> |
@@ -355,7 +355,7 @@ a different claim.
 - Filtered experiment views so "a higher overall score cannot hide new failures in
   permission-boundary or side-effect cases."
 
-That last point is the one that generalises. A single aggregate pass rate lets a
+That last point is the one that generalizes. A single aggregate pass rate lets a
 safety regression hide behind an accuracy improvement, and a gate built on one
 number will eventually approve a server that got worse at the thing that matters.
 
@@ -452,7 +452,7 @@ treat the date as SECONDHAND.]
 ### 2.3 External Secrets Operator, and a correction
 
 ESO is how a large share of Kubernetes deployments get a cloud secret store's
-contents into a pod, which makes it load-bearing for any containerised MCP server
+contents into a pod, which makes it load-bearing for any containerized MCP server
 fleet.
 
 | Fact | Value | Source |
@@ -578,7 +578,7 @@ Three findings, quoted from the abstract:
    microVM x continuous public fuzzer, is unoccupied in this set".
 
 The authors explicitly decline to rank: "no overall ranking is proposed", and
-"No single axis is a sufficient basis for a comparative judgement".
+"No single axis is a sufficient basis for a comparative judgement". <!-- lexicon: quotation -->
 
 Finding 2 is the one that changes a procurement conversation. The engine
 maintainers patch on disclosure; the products that embed the engine may not, and
@@ -669,7 +669,7 @@ kernel, so this is an egress control layered on the weakest isolation class in
 read 2026-09-18. Cloudflare's own docs say "its own isolated container with a
 full Linux environment" without naming the kernel-sharing property.]
 
-Other hosted sandboxes, characterised SECONDHAND from 2026 practitioner
+Other hosted sandboxes, characterized SECONDHAND from 2026 practitioner
 comparisons read 2026-09-18 and not verified against vendor docs in this pass:
 E2B on Firecracker microVMs with dedicated kernels; Daytona on Docker containers
 with a shared host kernel, and reported to have moved its production codebase to
@@ -685,7 +685,7 @@ already covered in
 `bestpractice/mcp-gateway-and-registry-operations.md`. Three additions specific
 to sandboxing as a control.
 
-**1. The sandbox becomes the enforcement point for data minimisation, and that is
+**1. The sandbox becomes the enforcement point for data minimization, and that is
 a property of the sandbox, not of the model.** Intermediate results staying in
 the execution environment is what makes the injection surface smaller. That
 property holds only while the sandbox actually contains them, which means the
@@ -732,7 +732,7 @@ Each of these was looked for and not found on 2026-09-18.
 5. **No published per-trace overage price for LangSmith, and no published
    per-span on-demand rate for Datadog LLM Observability.** Both checked on
    vendor-controlled pages. Section 1.3. Fleet-scale observability cost cannot be
-   modelled from public pricing for either.
+   modeled from public pricing for either.
 6. **No sandbox product in the studied set occupies microVM plus continuous
    public fuzzing.** The strongest available combination is unoccupied, and that
    intersection is "structurally unmeasured". Section 3.2.
@@ -760,7 +760,7 @@ one of them even though it is covered elsewhere.
 | Which human is ultimately responsible | Yes, at the edge | Only via non-conventional `baggage` | **Yes**, it is the subject of the exchange | No |
 | Whether the credential should exist at all | No | No | **Yes**, exclusively | No |
 | What the code tried to reach and was refused | No | No | No | **Yes**, exclusively |
-| Whether behaviour changed between versions | No | Partially, by comparing over time | No | No. The eval harness answers this |
+| Whether behavior changed between versions | No | Partially, by comparing over time | No | No. The eval harness answers this |
 | Whether a syscall or egress attempt was hostile | No | No | No | **Yes**, exclusively |
 
 ### 5.2 What each layer sees that no other layer can
@@ -829,12 +829,12 @@ revocation takes effect on the next call regardless of what any client cached.
 | Refused syscalls and blocked egress | Gateway, observability, broker | Sandbox, and only if it logs |
 | Authorization decisions in the trace record | Observability (no attribute exists) | Gateway, emitting its own structured event |
 | Argument and result content in the trace record | Observability at default settings | Observability, but only after opting in per attribute |
-| Behaviour change between server versions | All four | The eval harness, which is not a runtime layer |
+| Behavior change between server versions | All four | The eval harness, which is not a runtime layer |
 
 The last row is why section 1.5's absence matters more than it first appears.
 None of the four runtime layers answers "is this version of this server worse than
 the last one". The gateway enforces the policy it was given. The trace shows what
-happened, not what should have. The broker does not model behaviour. The sandbox
+happened, not what should have. The broker does not model behavior. The sandbox
 contains, it does not compare. A regression in a tool description, which is the
 attack in the poisoning literature already covered in `security/`, passes every
 runtime control cleanly because nothing at runtime holds a baseline. The gate has
@@ -858,7 +858,7 @@ network destinations executing code may reach. The gateway's control is
 irrelevant to code running inside a sandbox that has unrestricted network access,
 because that code does not need an MCP server to exfiltrate. Per 3.4, even a
 well-configured sandbox egress policy may cover only ports 80 and 443. The
-composition failure to watch for is an organisation that believes its gateway
+composition failure to watch for is an organization that believes its gateway
 controls where data can go.
 
 ### 5.5 Deployment implication, stated once

@@ -53,7 +53,7 @@ opposite directions.
 The "2,660 distinct names in the first 7,500 records" measurement is sound. Run
 again today on the same endpoint in the same order, the first 7,500 records
 contain **2,642 distinct names**. That is a stable property of the listing order,
-not an artefact.
+not an artifact.
 
 The "more than 28,000 version records" figure does not reproduce. Today the full
 paginated total is 108,042. Two days cannot produce that growth, so the 2026-09-17
@@ -224,10 +224,10 @@ This is the one part of the keynote's charge that stands, and it is narrower tha
 the line claims. The registry documents the filter that produces the right number
 and then never publishes the number.
 
-Worth noting for tone: the registry is labelled preview. From the aggregator doc,
+Worth noting for tone: the registry is labeled preview. From the aggregator doc,
 verified 2026-09-19: "The MCP Registry is currently in preview. Breaking changes
-or data resets may occur before general availability." Criticising a
-preview-labelled service for not publishing a headline statistic will land badly
+or data resets may occur before general availability." Criticizing a
+preview-labeled service for not publishing a headline statistic will land badly
 with its maintainers.
 
 ## The stronger finding, which the counting argument was obscuring
@@ -285,7 +285,7 @@ the work:
 > every version record. PulseMCP says 21,869 and tells you it leaves out the
 > low-quality ones. Glama says 89,255 and tells you it is a superset of the
 > registry plus hosted connectors. All three published what they counted. I still
-> could not tell you how many MCP servers my organisation is allowed to run,
+> could not tell you how many MCP servers my organization is allowed to run,
 > because not one of those numbers is a statement about fitness for anything."
 
 That version is defensible in the room. It cites each source correctly, credits
@@ -302,7 +302,7 @@ If a shorter line is wanted for the opening beat:
 
 > "Fifteen percent of the official registry comes from three GitHub accounts. The
 > median server in it has exactly one published version. An inventory that shape
-> is not a catalogue you shop from."
+> is not a catalog you shop from."
 
 All three figures verified by full pagination of the registry API on 2026-09-19
 and reproducible with the loop in the Reproduction section below.

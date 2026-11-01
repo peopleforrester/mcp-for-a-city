@@ -137,7 +137,7 @@ Read that carefully. Proxy environment variables are a convention, not a
 kernel-enforced boundary. A server that ignores `HTTP_PROXY` fails closed here
 because the container has no other route, which is the right design, but it
 means the control is the container network, not the proxy. Any topology that
-does not containerise the server does not have this control at all.
+does not containerize the server does not have this control at all.
 
 The MCP specification itself recommends egress proxies, in the SSRF section,
 for server-side client deployments:
@@ -215,7 +215,7 @@ was ever asked a question.
 | Registry as allowlist, gateway as the only sanctioned path | No. Governs only traffic routed to it | https://zuplo.com/blog/how-to-avoid-shadow-mcp-servers | [VENDOR] |
 | Firewall monitoring for "MCP signatures" | Partially, and only for servers that egress over the corporate network | same | [VENDOR] |
 | Kubernetes admission control on `MCPServer` resources | No. Governs cluster workloads only | https://docs.stacklok.com/toolhive/guides-k8s/ | [VENDOR] |
-| Containerised servers with an egress proxy | Only for servers you run, not servers a developer starts | https://docs.stacklok.com/toolhive/guides-cli/network-isolation | [VENDOR] |
+| Containerized servers with an egress proxy | Only for servers you run, not servers a developer starts | https://docs.stacklok.com/toolhive/guides-cli/network-isolation | [VENDOR] |
 | MDM-deployed endpoint agent that reads AI-app config files | Yes, on managed devices with the agent installed | https://www.getmaxim.ai/articles/shadow-mcp-servers-visibility-and-control-at-the-gateway/ | [VENDOR] |
 | Enterprise-Managed Authorization (ID-JAG through the enterprise IdP) | For any server that requires OAuth, yes, regardless of route | https://modelcontextprotocol.io/extensions/auth/enterprise-managed-authorization.md | [OFFICIAL] |
 
@@ -315,7 +315,7 @@ Strip it and the backend returns `-32020`. **[OFFICIAL]**, same source.
 Source: streamable-http transport page (verified 2026-09-18). **[OFFICIAL]**
 
 In a mixed fleet, a gateway that routes on `Mcp-Name` without checking the
-protocol version is routing on a value nothing validated. The correct behaviour
+protocol version is routing on a value nothing validated. The correct behavior
 is to reject, which means the migration to the stateless revision is not
 optional for anyone who wants header-based policy.
 
@@ -462,7 +462,7 @@ tool call."
 Source: https://aws.amazon.com/blogs/architecture/mcp-went-stateless-is-your-aws-mcp-server-deployment-well-architected/
 **[VENDOR]**
 
-### 3.2 Caching `tools/list`: the highest-value optimisation and the easiest cross-tenant leak
+### 3.2 Caching `tools/list`: the highest-value optimization and the easiest cross-tenant leak
 
 Servers **MUST** include `ttlMs` and `cacheScope` on `resultType: "complete"`
 results from `server/discover`, `tools/list`, `prompts/list`, `resources/list`,
@@ -508,7 +508,7 @@ The moment a gateway filters the list per group, its own responses are
 `private` and the shared-cache win is gone. What remains is a per-principal
 cache, which still helps, and which is the thing to build. A gateway that
 aggregates `public` upstream lists, filters them, and re-emits them as `public`
-has built a cross-tenant disclosure of the tool catalogue.
+has built a cross-tenant disclosure of the tool catalog.
 
 Other caching mechanics a gateway operator needs:
 
@@ -546,7 +546,7 @@ to an aggregating gateway changes the `tools` array of every client currently
 connected, which invalidates the provider-side prompt cache for every in-flight
 conversation across the fleet. Merging backend lists in a non-deterministic
 order does the same thing on every single call. A gateway that hot-reloads its
-backend set is billing the whole organisation for the reload.
+backend set is billing the whole organization for the reload.
 
 ### 3.4 Connection and session handling now that sessions are gone
 
@@ -608,11 +608,11 @@ The honest answer is yes, and there is no published operating account that says
 otherwise.
 
 This research found no primary or peer-reviewed source describing an MCP
-gateway's behaviour during its own outage, no published SLO, no failover
+gateway's behavior during its own outage, no published SLO, no failover
 architecture, and no post-incident writeup. TrueFoundry says the gateway "scales
 horizontally with ease" and does not describe failover. Docker, Kong, Agent
 Router, agentgateway and ContextForge documentation describe multi-replica
-deployment without describing degraded-mode behaviour. **[UNVERIFIED]** across
+deployment without describing degraded-mode behavior. **[UNVERIFIED]** across
 the board.
 
 ContextForge is the only project publishing peer-failure mechanics, and only
@@ -658,7 +658,7 @@ fix it.
 ### 4.1 AuthZEN, and the COAZ profile for MCP tool authorization
 
 The OpenID Foundation's Authorization API 1.0 reached Final Specification on
-2026-01-11. It standardises the PEP-to-PDP wire protocol without defining a
+2026-01-11. It standardizes the PEP-to-PDP wire protocol without defining a
 policy language.
 Sources: https://openid.net/authorization-api-1-0-final-specification-approved/ ,
 https://openid.github.io/authzen/ (verified 2026-09-18). **[STANDARDS]**
@@ -835,8 +835,8 @@ Inside `packages[]`: `registryType` (npm, pypi, cargo, oci, nuget, mcpb),
 `packageArguments`, `runtimeArguments`, `fileSha256`.
 
 Absent: approval status, owning team, on-call rotation, data classification,
-cost centre, criticality, review date, and every other field an enterprise
-catalogue needs.
+cost center, criticality, review date, and every other field an enterprise
+catalog needs.
 
 **But status is real, and it is not in `server.json`.** A live probe of the
 official API returns it in a registry-owned `_meta` namespace:
@@ -867,7 +867,7 @@ Source: https://modelcontextprotocol.io/registry/registry-aggregators
 
 So the mechanism for approval status, owning team and data classification
 exists. What does not exist is a vocabulary. `com.acme.registry/custom` means
-nothing to anyone but Acme, so a catalogue is not portable, not auditable
+nothing to anyone but Acme, so a catalog is not portable, not auditable
 against a standard, and not migratable between platforms. That is the real gap,
 and it is a naming problem, not a schema problem, which makes it exactly the
 kind of thing a foundation can fix cheaply.
@@ -880,12 +880,12 @@ Source: https://modelcontextprotocol.io/registry/faq.md (verified 2026-09-18).
 
 ### 5.4 Published private-registry implementations
 
-| Implementation | Licence | What it gives you | Source | Label |
+| Implementation | License | What it gives you | Source | Label |
 |---|---|---|---|---|
 | **Azure API Center** | Commercial, Azure | MCP registry endpoint at `https://<name>.data.<region>.azure-apicenter.ms/workspaces/default/v0.1/servers`, note the matching `v0.1`. Remote servers (runtime URL plus environment) and local servers (package registry, name, version, runtime hint, runtime args). Per-server version lifecycle metadata. Auto-generated SSE and Streamable definitions. Portal with a built-in test console ("select a tool and then **Run tool**"). Sync from Azure API Management or a Git repository. Access management. Custom metadata mapped "into structured namespaces" that "appear in the `_meta` section of MCP server responses" | https://learn.microsoft.com/en-us/azure/api-center/register-discover-mcp-server (doc dated 2026-05-29, retrieved 2026-09-18) | [VENDOR] |
-| **ToolHive Registry Server** | Apache 2.0 core | Self-hosted catalogue that "aggregates entries from Kubernetes clusters, Git repositories, API endpoints, and local files" behind "a standard MCP Registry API". Registry JSON schema "builds on the official MCP server schema and adds skills and publisher-provided metadata". Configurable sync policies. Helm, manual, or Operator deployment. "role-based access control and claims-based authorization", anonymous or OAuth | https://docs.stacklok.com/toolhive/guides-registry/ | [VENDOR] |
+| **ToolHive Registry Server** | Apache 2.0 core | Self-hosted catalog that "aggregates entries from Kubernetes clusters, Git repositories, API endpoints, and local files" behind "a standard MCP Registry API". Registry JSON schema "builds on the official MCP server schema and adds skills and publisher-provided metadata". Configurable sync policies. Helm, manual, or Operator deployment. "role-based access control and claims-based authorization", anonymous or OAuth | https://docs.stacklok.com/toolhive/guides-registry/ | [VENDOR] |
 | **IBM ContextForge** | Apache 2.0 | Registry inside the gateway. "YAML-based catalog configuration with auto-health checking", 3600s TTL, 100 items per page default, peer federation with mDNS/Zeroconf or configured peers | https://ibm.github.io/mcp-context-forge/architecture/ | [VENDOR] |
-| **Docker MCP Catalog** | Mixed | Curated public catalogue plus custom catalogues for a team or organisation; OCI-distributed (`mcp/docker-mcp-catalog`) | https://docs.docker.com/ai/mcp-catalog-and-toolkit/catalog/ , https://github.com/docker/mcp-gateway | [VENDOR] |
+| **Docker MCP Catalog** | Mixed | Curated public catalog plus custom catalogs for a team or organization; OCI-distributed (`mcp/docker-mcp-catalog`) | https://docs.docker.com/ai/mcp-catalog-and-toolkit/catalog/ , https://github.com/docker/mcp-gateway | [VENDOR] |
 
 Azure API Center is the only one publishing its registry endpoint shape, which
 is why it is worth showing. ToolHive is the only Apache-2.0 self-hostable one
@@ -1103,7 +1103,7 @@ Source: https://ibm.github.io/mcp-context-forge/architecture/ (verified
 
 ---
 
-## 7. The registry as an organisational object
+## 7. The registry as an organizational object
 
 ### 7.1 The counter-evidence first, because it is the strongest evidence available
 
@@ -1115,7 +1115,7 @@ Block's account, as reported by All Things Open:
 > Block already has 12,000 employees using them across 15 different job
 > functions
 
-within two months of operationalisation, and
+within two months of operationalization, and
 
 > Within a month, 75 percent of engineers were saving 8 to 10 hours a week
 
@@ -1124,7 +1124,7 @@ install MCP servers independently", "lacked understanding of API keys", and
 "couldn't locate needed tools".
 
 The fixes were all distribution, not gating: Goose added to the internal software
-centre for automatic deployment and updates; "They built over 100 internal MCP
+center for automatic deployment and updates; "They built over 100 internal MCP
 servers bundled by default" rather than requiring external tool hunting; OAuth
 with IdP integration replacing credential management with familiar SSO; dynamic
 server enabling and disabling based on the query.
@@ -1137,7 +1137,7 @@ And on governance style:
 Block's stated reason for building internal servers was "security and control,
 not distrust of open source options".
 Source: https://allthingsopen.org/articles/block-scaled-mcp-12000-employees-15-job-functions
-(verified 2026-09-18). **[SECONDHAND]**, a conference-organiser write-up of a
+(verified 2026-09-18). **[SECONDHAND]**, a conference-organizer write-up of a
 Block talk rather than Block's own post.
 
 Block's own engineering blog corroborates the scale and the design philosophy
@@ -1160,7 +1160,7 @@ when the server's tools change afterwards; the Security IG carries "Runtime
 drift: `list_changed` semantics after approval" as an **Open** item with no
 champion. **[OFFICIAL]**
 
-So approving a registry entry certifies the metadata, not the behaviour. An
+So approving a registry entry certifies the metadata, not the behavior. An
 approval process that believes otherwise is measuring the wrong thing. The
 honest formulation for a slide: a registry approval is a supply-chain control,
 and the runtime control is the gateway, and neither substitutes for the other.
@@ -1177,7 +1177,7 @@ Three published mechanisms, none of them a review queue:
 2. **Default-allow with a curated bundle.** Block's 100+ servers bundled by
    default. **[SECONDHAND]**
 3. **Tiering by what the server can reach**, which is the shape that emerges
-   from the scope-minimisation guidance: a read-only tool and a destructive one
+   from the scope-minimization guidance: a read-only tool and a destructive one
    in the same server need different treatment, and the spec's "Minimal initial
    scope set (e.g., `mcp:tools-basic`) containing only low-risk
    discovery/read operations" with step-up for the rest is the protocol's own
@@ -1186,7 +1186,7 @@ Three published mechanisms, none of them a review queue:
 The honest summary for the stage: the published evidence that approval gates
 produce value in MCP deployments is absent, and the published evidence that
 friction blocks adoption is specific and numeric. That asymmetry should shape
-where an organisation spends its governance budget. It is not an argument
+where an organization spends its governance budget. It is not an argument
 against having gates. It is an argument for measuring the cost of the ones you
 build.
 
@@ -1360,13 +1360,13 @@ Three published findings that collide.
    substantially beyond ~100. arXiv 2505.03275. **[PEER]**, via the companion
    operations research, which also documents that the widely circulated "43% to
    14% collapse" version of this finding reverses the paper's direction.
-3. **The organisation still needs them available.** Block's answer was over 100
+3. **The organization still needs them available.** Block's answer was over 100
    internal servers bundled by default, with "dynamic server enabling/disabling
    based on queries". **[SECONDHAND]**
 
 The synthesis, which is the operationally useful part: at rollout scale,
 aggregation and filtering are the same problem. A gateway that presents 400
-servers as one `tools/list` has produced a catalogue the agent measurably cannot
+servers as one `tools/list` has produced a catalog the agent measurably cannot
 use. The gateway's job at that size is not to aggregate, it is to answer
 `search_tools` well, and the spec's progressive-discovery pattern puts that
 capability in the **host**, not the gateway. A platform team that has invested
@@ -1444,7 +1444,7 @@ governance post; and the All Things Open and Block engineering accounts.
   self-reported, not independently reproduced.
 - SEP-2809's "48 hermetic tests" and "27,000+ evasion attempts". Author's claim
   in a Draft PR.
-- Any MCP gateway's behaviour during its own outage, any published SLO, and any
+- Any MCP gateway's behavior during its own outage, any published SLO, and any
   failover architecture. Nothing found, from any source.
 - ToolHive, ContextForge, Docker MCP Gateway and kgateway current version
   numbers. Not re-checked in this pass; see the companion architecture research.

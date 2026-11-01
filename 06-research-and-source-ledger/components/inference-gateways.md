@@ -32,7 +32,7 @@ does so from the inference side.
 
 | Label | Meaning |
 |---|---|
-| **[OFFICIAL]** | Vendor's own product documentation, changelog, release artefact or API. Authoritative for what the product is, not for whether it is good |
+| **[OFFICIAL]** | Vendor's own product documentation, changelog, release artifact or API. Authoritative for what the product is, not for whether it is good |
 | **[PEER-REVIEWED]** | Published at a refereed venue, or an arXiv preprint with a stated method |
 | **[VENDOR]** | Marketing copy, blog post or comparison page written to sell. A floor for scepticism |
 | **[PRACTITIONER]** | Independent engineer or analyst who measured or read the primary material |
@@ -69,8 +69,8 @@ terminate MCP traffic in the same data plane. That is section 5.
 
 ## 2. The projects
 
-Version and licence facts verified 2026-09-18. "Governance home" means who
-controls the roadmap, which is the question that matters when standardising a
+Version and license facts verified 2026-09-18. "Governance home" means who
+controls the roadmap, which is the question that matters when standardizing a
 fleet on something.
 
 ### 2.1 LiteLLM
@@ -80,7 +80,7 @@ fleet on something.
 flagged prerelease in the API.
 Source: GitHub Releases API for `BerriAI/litellm` [OFFICIAL], 2026-09-18.
 
-**Licence is open core with a directory boundary, not plain MIT.** The repository
+**License is open core with a directory boundary, not plain MIT.** The repository
 `LICENSE` file reads verbatim:
 
 > "Portions of this software are licensed as follows:
@@ -91,7 +91,7 @@ Source: GitHub Releases API for `BerriAI/litellm` [OFFICIAL], 2026-09-18.
 > available under the MIT license as defined below."
 
 Source: `https://raw.githubusercontent.com/BerriAI/litellm/main/LICENSE` [OFFICIAL].
-GitHub's licence detector reports `NOASSERTION` for this repo as a result, so any
+GitHub's license detector reports `NOASSERTION` for this repo as a result, so any
 comparison table that lists LiteLLM as "MIT" without qualification is repeating a
 simplification.
 
@@ -121,7 +121,7 @@ the full feature surface are still landing", and the published roadmap targets t
 full server by **2026-12-01**.
 Source: `https://docs.litellm.ai/blog/rust-ai-gateway-benchmarks` and
 `https://docs.litellm.ai/docs/proxy/rust_gateway` [OFFICIAL].
-An enterprise standardising on LiteLLM in September 2026 is standardising on a
+An enterprise standardizing on LiteLLM in September 2026 is standardizing on a
 product whose data plane is being replaced under it over the next quarter. The
 vendor states configs, database, client API and providers are unchanged, which is a
 migration promise rather than a measured outcome.
@@ -256,7 +256,7 @@ Source: GitHub API for `Helicone/helicone`, releases, tags and commits endpoints
 [OFFICIAL], 2026-09-18.
 
 So a self-hosting enterprise is tracking a branch, not a release, and a security
-fix landed with no tagged artefact carrying it. For a component sitting in the
+fix landed with no tagged artifact carrying it. For a component sitting in the
 inference path holding every provider credential, that is a supply-chain posture
 worth stating plainly rather than a packaging detail.
 
@@ -267,8 +267,8 @@ $79/month, Team $799/month (five orgs, SOC-2 and HIPAA, dedicated Slack),
 Enterprise custom (custom MSA, SAML SSO, on-prem deployment).
 Sources: `https://www.helicone.ai/` and `https://www.helicone.ai/pricing`
 [OFFICIAL/VENDOR]. Self-hosting is documented via manual install, Docker Compose,
-Kubernetes Helm and cloud deployment, and the self-host docs state **no licence
-restriction or enterprise-licence requirement** for self-hosting.
+Kubernetes Helm and cloud deployment, and the self-host docs state **no license
+restriction or enterprise-license requirement** for self-hosting.
 Source: `https://docs.helicone.ai/getting-started/self-host/overview` [OFFICIAL].
 
 ### 2.6 OpenRouter
@@ -495,21 +495,21 @@ they come from.
 Verified 2026-09-18. **"Enforces" means what the project's own documentation says
 it enforces**, not an independent evaluation. Where a capability is gated behind a
 paid tier, the cell says so, because "has budgets" and "has budgets if you buy the
-Enterprise licence" are different answers to a procurement question.
+Enterprise license" are different answers to a procurement question.
 
 Legend: **Y** documented, **Y(E)** documented but Enterprise or paid tier only,
 **P** preview or beta, **N** not offered, **?** not documented / unverified.
 
-| Project | Licence | Current version | Governance home | Credentials | Routing | Caching | Budgets | Guards | Audit | Self-hostable |
+| Project | License | Current version | Governance home | Credentials | Routing | Caching | Budgets | Guards | Audit | Self-hostable |
 |---|---|---|---|---|---|---|---|---|---|---|
-| **LiteLLM** | MIT except `enterprise/`, which has its own licence | `v1.101.0` (2026-09-15); Rust data plane in beta, full server targeted 2026-12-01 | BerriAI, commercial company, no foundation | Y, virtual keys; secret-manager write and key rotation Y(E) | Y, 100+ providers, fallbacks | ? not in the vendor feature table | Y(E) per vendor page; secondary sources say OSS. **Conflicting** | Y(E) per vendor page | Logging Y; audit logs Y(E) | Y |
+| **LiteLLM** | MIT except `enterprise/`, which has its own license | `v1.101.0` (2026-09-15); Rust data plane in beta, full server targeted 2026-12-01 | BerriAI, commercial company, no foundation | Y, virtual keys; secret-manager write and key rotation Y(E) | Y, 100+ providers, fallbacks | ? not in the vendor feature table | Y(E) per vendor page; secondary sources say OSS. **Conflicting** | Y(E) per vendor page | Logging Y; audit logs Y(E) | Y |
 | **Portkey (OSS gateway)** | MIT | `v1.15.2` (2026-01-12); last commit 2026-05-25 | Palo Alto Networks since 2026-05-29 | Y | Y, 1,600+ models claimed | Y | Y | Y, 50+ guardrails claimed | Y | Y |
 | **Prisma AIRS AI Gateway** | Commercial | GA 2026-07-16, no public version line | Palo Alto Networks | Y, credential scoping | Y | ? | Y, budgets and rate limits | Y, prompt and response inspection | Y | N, vendor platform |
 | **Kong AI Gateway** | Commercial; six AI plugins free in Kong Gateway | 2.0 GA 2026-09-01, own version line | Kong Inc. | Y | Y, LLM routing and load balancing | Y(E) semantic, Enterprise tier, min KGW 3.8 | Y, token-based rate limiting; modality-aware cost accounting | Y, prompt guarding | Y, analytics and identity-aware policies | Y, self-managed or Konnect |
 | **Cloudflare AI Gateway** | Commercial, managed | No version; changelog-tracked | Cloudflare | Y, BYOK via Secrets Store | Y, Dynamic Routing with per-node fallback | Y, **exact match only**, semantic stated as future | Y, rate limiting; budgets via BYOK nodes | Y, Guardrails, block or flag | Y, logs, analytics, User Insights | **N** |
-| **Helicone** | Apache-2.0 | **Cannot pin.** Last tag `v2025.08.21-1`; branch active to 2026-09-16 | Helicone Inc. (YC W23) | Y | Y | ? | Rate limiting Y | ? | Y, observability is the product | Y, no stated licence restriction |
+| **Helicone** | Apache-2.0 | **Cannot pin.** Last tag `v2025.08.21-1`; branch active to 2026-09-16 | Helicone Inc. (YC W23) | Y | Y | ? | Rate limiting Y | ? | Y, observability is the product | Y, no stated license restriction |
 | **OpenRouter** | Proprietary, hosted | No version, hosted service | OpenRouter Inc. | Y, plus BYOK | Y, marketplace routing across providers | ? | Credit-based; BYOK allowance caps | ? | Metadata only by default; prompts not logged by default | **N documented** |
-| **TrueFoundry** | Commercial | **? unverified** | TrueFoundry | Y, centralised key management | Y, latency-based, weighted, geo-aware, failover | ? | Y, cost and token quotas, throttle or block | Y, PII filtering, toxicity | Y, SOC 2 / HIPAA / GDPR framing | Y, VPC, on-prem, hybrid, air-gapped |
+| **TrueFoundry** | Commercial | **? unverified** | TrueFoundry | Y, centralized key management | Y, latency-based, weighted, geo-aware, failover | ? | Y, cost and token quotas, throttle or block | Y, PII filtering, toxicity | Y, SOC 2 / HIPAA / GDPR framing | Y, VPC, on-prem, hybrid, air-gapped |
 | **Agent Router** | Apache-2.0 | `v1.1.0` (2026-08-21) | **Agentic AI Foundation**, from CNCF 2026-09-10; repo moved to `theagentrouter/agent-router` | Y, per-request upstream credentials | Y, CEL backend selection, stream idle failover | ? | Token counting across providers | Via MCP security policy CRDs on the tool plane | Y, OTel GenAI tracing, Prometheus | Y |
 | **agentgateway** | Apache-2.0 | `v1.5.0` (2026-08-27); `v1.6.0-alpha.1` (2026-09-14) | **Agentic AI Foundation** | Y | Y, native Gemini APIs | ? | Y, API-key-scoped budgets and model access | CEL policy engine | Y, OTel metrics/logs/traces | Y |
 | **kgateway** | Apache-2.0 | `v2.4.5` (2026-09-16); `v2.3.9` same day | CNCF Sandbox | Y | Y, Envoy-based | ? | ? | ? | Y, Envoy telemetry | Y |
@@ -591,7 +591,7 @@ rate, or an evaluation method for its guards.** That absence is the finding. An
 operator buying "prompt injection filtering" is buying an unmeasured control, and
 the independent measurements that do exist are not flattering.
 
-**Over-defence is the other half of the failure.** Detectors including InjecGuard
+**Over-defense is the other half of the failure.** Detectors including InjecGuard
 and PromptGuard maintain high recall on attacks while collapsing on benign prompt
 classification, with reported accuracy between 5% and 35%, and AUC inflated by up
 to 8.4 points when evaluated on standard splits rather than leave-one-dataset-out.
@@ -636,7 +636,7 @@ and the failure shape:
 > suspicious and reaches 100% recall, while a loose configuration treats all inputs
 > as safe and reaches 100% precision."
 
-The paper proposes a new defence and states plainly that "complete mitigation remains
+The paper proposes a new defense and states plainly that "complete mitigation remains
 challenging".
 
 **This is the single most important finding in this file for an enterprise.**
@@ -648,7 +648,7 @@ black-box conditions. Kong's own documentation independently corroborates the
 benign version of the same failure ("may still return results for queries that are
 similar but not identical").
 
-Cloudflare's exact-match-only cache, criticised in section 2.4 as nearly useless for
+Cloudflare's exact-match-only cache, criticized in section 2.4 as nearly useless for
 agent workloads, is immune to this class of attack. That is the trade being made,
 and it is rarely stated as a trade.
 
@@ -671,14 +671,14 @@ What can be said structurally:
   "requires significant storage and computing resources for vector storage and
   similarity searches" [OFFICIAL]. Under load this is a second datastore that can
   saturate independently of the gateway.
-- **Synchronous guards serialise a classifier in front of every request.** Since no
+- **Synchronous guards serialize a classifier in front of every request.** Since no
   vendor publishes guard latency, the concurrency cost of enabling them is unknown
   before deployment.
 
 ### 4.4 Latency per hop, with the measured figures and their caveats
 
 Published gateway-overhead figures span roughly five orders of magnitude, from 11
-microseconds to 257.7 milliseconds. **That spread is a methodology artefact, not a
+microseconds to 257.7 milliseconds. **That spread is a methodology artifact, not a
 performance difference.**
 
 | Claim | Figure | Test conditions | Label |
@@ -709,7 +709,7 @@ The vendor published the caveat. Comparison articles quote the number and drop i
 
 **The number that actually matters.** Real inference runs 500 ms to 5 seconds. A
 gateway hop of 1 to 30 ms is a low single-digit percentage of total request time.
-Optimising from 4 ms to 0.7 ms is invisible to a user and is not a sound basis for
+Optimizing from 4 ms to 0.7 ms is invisible to a user and is not a sound basis for
 choosing a gateway. **Choose on credential custody, governance home, audit quality
 and tier boundaries. Latency is not the differentiator the benchmarks imply**, with
 one exception: LiteLLM's Python data plane at 257.7 ms p99 is in a different
@@ -829,7 +829,7 @@ concept documentation, verified by direct read 2026-09-18.
 
 Figures that circulate: 4.5% saving in Balanced mode, 4.7% in Cost mode, 14.2% in
 Quality mode. Source: a Microsoft Community Hub blog post
-(`https://techcommunity.microsoft.com/blog/azuredevcommunityblog/optimising-ai-costs-with-microsoft-foundry-model-router/4494776`)
+(`https://techcommunity.microsoft.com/blog/azuredevcommunityblog/optimising-ai-costs-with-microsoft-foundry-model-router/4494776`) <!-- lexicon: URL -->
 [PRACTITIONER, community-authored, hosted on a Microsoft property but not Microsoft
 documentation]. **The methodology could not be retrieved**: the page body did not
 return on fetch, so prompt count, dataset and baseline are unknown. Marked
@@ -908,7 +908,7 @@ Corrections and resolutions against existing files in this repo:
    **UNVERIFIED** flag in `06-research-and-source-ledger/scale/mcp-at-scale-architecture-2026-09.md`
    section 3.
 2. **LiteLLM version resolved**: `v1.101.0`, 2026-09-15. Resolves the
-   **UNVERIFIED** flag in the same file. Licence is more precisely "MIT except the
+   **UNVERIFIED** flag in the same file. License is more precisely "MIT except the
    `enterprise/` directory", not MIT.
 3. **kgateway version resolved**: `v2.4.5`, 2026-09-16. Resolves the
    **UNVERIFIED** flag in `06-research-and-source-ledger/scale/` section 2.1.
@@ -945,10 +945,10 @@ Corrections and resolutions against existing files in this repo:
 - **The Vertex to Gemini Enterprise Agent Platform transition.** Sourced only
   secondhand in this pass. Must be confirmed against a Google Cloud release note
   before it is said anywhere public.
-- **Over-defence percentages for InjecGuard and PromptGuard** (5% to 35% benign
+- **Over-defense percentages for InjecGuard and PromptGuard** (5% to 35% benign
   accuracy, 8.4 point AUC inflation). Surfaced via search, not read from the paper
   PDFs. The directional claim is well supported; the figures are not yet confirmed.
 - **TrueFoundry gateway version.** No public version identifier found.
-- **Concurrency behaviour for every product in the table.** Nobody publishes a
+- **Concurrency behavior for every product in the table.** Nobody publishes a
   saturation point or a degradation curve. This gap is identical to the one already
   recorded on the MCP gateway side.

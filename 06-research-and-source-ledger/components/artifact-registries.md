@@ -27,7 +27,7 @@ and are referenced rather than re-derived.
 
 | Label | Meaning |
 |---|---|
-| **[OFFICIAL]** | A specification, a standards body document, or first-party product documentation from the organisation that owns the thing |
+| **[OFFICIAL]** | A specification, a standards body document, or first-party product documentation from the organization that owns the thing |
 | **[VENDOR]** | Vendor marketing or a vendor engineering blog. Treated as a claim, not evidence |
 | **[PEER-REVIEWED]** | Peer-reviewed or preprint with a stated method |
 | **[PRACTITIONER]** | A named operator describing something they ran |
@@ -48,7 +48,7 @@ Everything below was fetched and read on **2026-09-18** unless a line says other
 | **MLflow Model Registry** | A registered model with named versions | Named model, numbered versions | Aliases (mutable named pointers), tags (key-value on model and version), descriptions, lineage to the producing run | <https://mlflow.org/docs/latest/ml/model-registry/> [OFFICIAL] |
 | **SageMaker Model Registry** | A Model Package inside a Model Package Group | New version per registered package | Approval status on a model, Model Cards surfaced in the record, lineage, a "staging construct that models can progress through", Collections, sharing | <https://docs.aws.amazon.com/sagemaker/latest/dg/model-registry.html> [OFFICIAL] |
 | **Vertex AI Model Registry** | A model resource with versions | Versions plus aliases | Aliases, labels, deployment linkage, BigQuery ML integration | <https://docs.cloud.google.com/vertex-ai/docs/model-registry/introduction> [OFFICIAL] |
-| **Hugging Face Hub** | A git repository holding model checkpoints | Git, so commits and refs | Repository permissions, model cards, organisations | <https://huggingface.co/docs/hub/en/models-the-hub> [OFFICIAL] |
+| **Hugging Face Hub** | A git repository holding model checkpoints | Git, so commits and refs | Repository permissions, model cards, organizations | <https://huggingface.co/docs/hub/en/models-the-hub> [OFFICIAL] |
 | **Weights and Biases Registry** | A curated collection of artifact versions | Immutable artifact versions | Aliases, lineage graphs to the producing run, lifecycle stage promotion | <https://docs.wandb.ai/models/registry> and <https://wandb.ai/site/registry/> [VENDOR] |
 
 SageMaker's capability list, verbatim, is the fullest statement of what this
@@ -102,7 +102,7 @@ MLflow GenAI landing page fetched in this pass makes no statement that agents
 are registered in the Model Registry.
 <https://mlflow.org/docs/latest/genai/> [OFFICIAL], read 2026-09-18.
 
-**The structural argument, labelled as synthesis rather than sourced.** When an
+**The structural argument, labeled as synthesis rather than sourced.** When an
 agent calls a hosted frontier model over an API, the deployed unit is a string
 model id plus a set of parameters. There is no weights artifact in the
 enterprise's custody, so the registry's core object does not exist for that path.
@@ -206,9 +206,9 @@ brief, and it cuts directly against the Langfuse positioning quoted above, whose
 explicit value proposition is that a prompt change does not go through a
 deployment.
 
-Both positions are coherent and they are optimising for different failure modes.
-The registry-as-config model optimises for iteration speed by a non-engineer. The
-prompt-as-code model optimises for the change being reviewable, testable and
+Both positions are coherent and they are optimizing for different failure modes.
+The registry-as-config model optimizes for iteration speed by a non-engineer. The
+prompt-as-code model optimizes for the change being reviewable, testable and
 revertable through the same gate as every other change. An enterprise deciding
 between them is choosing which of those two it is willing to lose, and neither
 vendor frames it that way.
@@ -256,7 +256,7 @@ reading both pages on 2026-09-18.
 
 # Part 3: Agent registries and A2A agent cards
 
-This is the centre of the brief. The short version: the two card formats are not
+This is the center of the brief. The short version: the two card formats are not
 merging, and a joint MCP and A2A steering body is building a shared discovery and
 trust envelope around both of them instead.
 
@@ -357,7 +357,7 @@ and, as the closing line of the same document:
 [OFFICIAL], read 2026-09-18.
 
 **Signing is optional.** "Agent Cards **MAY** be digitally signed using JSON Web
-Signature (JWS)." Canonicalisation is JCS, RFC 8785, with the `signatures` field
+Signature (JWS)." Canonicalization is JCS, RFC 8785, with the `signatures` field
 excluded from the signed content. Verification is a six-step MUST list for clients
 that choose to verify, and the trust decision is a SHOULD: "Clients **SHOULD**
 verify at least one signature before trusting an Agent Card." Sections 8.4 through
@@ -425,7 +425,7 @@ same day, the picture is more specific:
 | Wire format location | `modelcontextprotocol/experimental-ext-server-card`, "graduating to an `ext-server-card` repository on acceptance" | same |
 
 So: the SEP text declares itself Final, the pull request that would land it is
-still open and labelled in-review, and the repository holding the normative wire
+still open and labeled in-review, and the repository holding the normative wire
 format is still named `experimental-`. Not merged, not accepted. Anyone citing
 "MCP Server Cards are final" is quoting a line inside an unmerged document.
 
@@ -502,7 +502,7 @@ The SEP draws the boundary between the two MCP documents itself:
 2. **Authentication.** An agent card carries full OpenAPI-shaped security schemes.
    Neither MCP document carries any; MCP auth is discovered through
    `/.well-known/oauth-protected-resource` and the authorization specification. A
-   catalogue holding both record types therefore has authentication metadata for
+   catalog holding both record types therefore has authentication metadata for
    one and not for the other.
 3. **Naming.** `server.json` mandates reverse-DNS with exactly one slash, which
    encodes a namespace claim. `AgentCard.name` is "a human readable name" with no
@@ -512,7 +512,7 @@ The SEP draws the boundary between the two MCP documents itself:
 
 ## 3.7 Are they converging? Yes, but not in the way the question implies
 
-The two card formats are not being merged. A joint body is standardising a common
+The two card formats are not being merged. A joint body is standardizing a common
 container and a common trust layer around them, and the protocol-specific formats
 are explicitly staying as they are.
 
@@ -565,7 +565,7 @@ answers the brief's question directly:
 README, [OFFICIAL], read 2026-09-18. Note the conditionals. The vote has not
 happened.
 
-**The mechanism.** Entries are typed by media type. The recognised types are
+**The mechanism.** Entries are typed by media type. The recognized types are
 partitioned by who governs them:
 
 Core, governed by the AI Catalog WG: `application/ai-catalog+json` (a nested
@@ -618,7 +618,7 @@ record types verbatim:
 [VENDOR], read 2026-09-18.
 
 Two observations worth carrying forward. First, AWS holds A2A agent cards and MCP
-server records as **sibling types in one catalogue rather than merging them**,
+server records as **sibling types in one catalog rather than merging them**,
 which is the same architectural choice the AI Catalog makes. Second, AWS's MCP
 record type is described as covering "its tools, resources, and prompts", which is
 exactly the primitive enumeration that SEP-2127 refuses to put in a static
@@ -658,7 +658,7 @@ re-covered here.
 
 ## 4.2 What happens when they disagree
 
-**MCP resolves in favour of runtime, in writing.** "Clients SHOULD verify a Server
+**MCP resolves in favor of runtime, in writing.** "Clients SHOULD verify a Server
 Card's claims against the live connection, preferring the runtime values where the
 two disagree", and clients "MUST NOT treat Server Card contents as authoritative
 for security or access-control decisions." [OFFICIAL]
@@ -696,7 +696,7 @@ and context accuracy are different audits."
 
 - The A2A agent card has no approval field, no owner field, no lifecycle state and
   no contact. The closest thing is `provider`, which is two strings: an
-  organisation name and a URL. Verified against the full proto message.
+  organization name and a URL. Verified against the full proto message.
 - `server.json` has no approval field. The existing registry research already
   establishes that status "is real, and it is not in `server.json`"; it lives in
   registry-owned `_meta`, which by construction does not travel with the record in
@@ -706,8 +706,8 @@ and context accuracy are different audits."
   extension support."
 - Both vendor registries that do carry approval carry it in proprietary fields.
   AWS's `APPROVED` and `REJECTED` states are AWS states. Microsoft's ownership and
-  sponsorship live in Entra. Neither serialises into a document another
-  organisation's registry can read.
+  sponsorship live in Entra. Neither serializes into a document another
+  organization's registry can read.
 
 **PARTIALLY REFUTED as a claim about the future.** The AI Catalog Trust Manifest is
 precisely a portable approval and provenance envelope, and it is designed not to
@@ -726,7 +726,7 @@ It requires an `identity` that "SHOULD be a DID, SPIFFE ID, or URL", carries an
 `displayName` and an optional `identityType` hint such as "did" or "dns".
 Conformance Level 3 requires a signature, a subject binding and an `issuedAt`, and
 requires consumers to verify all three before relying on any claim. There is an
-explicit anti-theatre rule: a Trust Manifest carrying only non-substantive members
+explicit anti-theater rule: a Trust Manifest carrying only non-substantive members
 "MUST be omitted entirely rather than included empty". [OFFICIAL], specification,
 read 2026-09-18.
 
@@ -767,7 +767,7 @@ means.** The AI Catalog names federation as design goal 5:
 
 That is hierarchical delegation, which is a real and useful thing, and it is not
 the same as peer federation between two registries operated by different
-organisations that need to reconcile overlapping records. Nothing read in this
+organizations that need to reconcile overlapping records. Nothing read in this
 pass defines conflict resolution between two catalogs that both claim the same
 `urn:air` identifier, and the specification's own security section lists
 "Identifier Typosquatting" and "Catalog Poisoning" as threats rather than as

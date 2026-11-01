@@ -64,7 +64,7 @@ a shipped protocol feature. See Section 4.2 on why that gap matters.
 
 | # | Where | Mechanism | Quantified evidence |
 |---|---|---|---|
-| T1 | **Tool definitions in the prompt prefix** | Every connected server's `tools/list` output is serialised into the model's `tools` array before turn one | 55K tokens for five servers, below |
+| T1 | **Tool definitions in the prompt prefix** | Every connected server's `tools/list` output is serialized into the model's `tools` array before turn one | 55K tokens for five servers, below |
 | T2 | **Tool results in context** | Every intermediate result of a chained call passes through the model even when the model does nothing with it | 150K to 2K on one workflow, below |
 | T3 | **Multi-turn accumulation** | Definitions are re-sent every turn; results stay in the transcript; post-2026-07-28, cross-call state moved from the transport into tool arguments and therefore into the window | See 1.5 |
 | T4 | **Schema verbosity** | Descriptions, argument names and argument descriptions are all prompt text, and JSON Schema 2020-12 now permits `oneOf`/`allOf`/`$ref` composition in `inputSchema` and `outputSchema` | See 1.6 |
@@ -87,7 +87,7 @@ both a model and a client, so these are first-hand measurements of their own sta
 | The spec docs' own illustration of the same effect | "~150,000 tokens on definitions alone, while progressive discovery uses ~2,000 tokens" | MCP client best practices, progressive-discovery diagram alt text | [PRIMARY] |
 
 **Methodology caveat, stated because the talk should state it.** None of these posts
-publishes a tokeniser, a server version, or the exact tool set. "GitHub, Slack, Sentry,
+publishes a tokenizer, a server version, or the exact tool set. "GitHub, Slack, Sentry,
 Grafana, Splunk" names five products, not five pinned server builds, and server tool
 surfaces change weekly. The figures are internally consistent across three Anthropic
 surfaces and are the best published numbers that exist, and they are not reproducible from
@@ -348,7 +348,7 @@ The tools page states it at greater length:
 > are included in model context."
 
 **Read it as an admission.** A SHOULD this specific only gets written after somebody watched
-a server return the same tools in a different order on consecutive calls, serialise into a
+a server return the same tools in a different order on consecutive calls, serialize into a
 different `tools` array, and miss the prompt cache every turn for no reason. The cost of
 that bug, by 1.7, is $0.275 a turn instead of $0.0275 across an unchanged tool surface.
 
@@ -357,7 +357,7 @@ client change, no gateway, and no sandbox, and it is worth an order of magnitude
 largest line item. If the talk gives server authors one instruction, this is a strong
 candidate.
 
-### 2.5 What a gateway or registry does to cache behaviour
+### 2.5 What a gateway or registry does to cache behavior
 
 Three verified mechanisms, and one genuine hazard the spec names itself.
 
@@ -427,7 +427,7 @@ See Section 5.4. This is where the cost lever and the security lever collide.
 | GitHub MCP server, 35 tools | ~26,000 tokens | AgentPMT | [SECONDHAND] |
 | Slack MCP server, 11 tools | ~21,000 tokens | AgentPMT | [SECONDHAND] |
 | Five-server setup at conversation start | ~55,000 tokens | Anthropic | [PRIMARY] |
-| Anthropic's own worst published case | 134,000 tokens of definitions before optimisation | Anthropic | [PRIMARY] |
+| Anthropic's own worst published case | 134,000 tokens of definitions before optimization | Anthropic | [PRIMARY] |
 
 The AgentPMT numbers are the ones in everyone's slides and they are secondhand with no
 published method. **They are also the same source that inverted the RAG-MCP finding** (ops
@@ -498,13 +498,13 @@ Verified mechanisms, in order of how certain each is.
 1. **Definitions add linearly and the window does not.** Five servers is ~55K [PRIMARY].
 2. **Tool-name collisions are guaranteed at scale and the spec says so**: "two servers each
    exposing a `search` tool". Disambiguation is a SHOULD on the client or proxy, not a MUST,
-   so behaviour differs per client [PRIMARY].
+   so behavior differs per client [PRIMARY].
 3. **Selection accuracy degrades past roughly 30 tools**, which three or four servers reach
    easily (35 tools in the GitHub server alone) [PEER + PRIMARY].
 4. **Cross-server data flow is an untrusted-input problem.** "Tool results from one server are
    untrusted input to another" [PRIMARY, MCP client best practices]. Connecting more servers
    does not just cost more, it composes trust boundaries.
-5. **Per-client behaviour is not documented anywhere.** The ops file's [MEASURED-HERE] finding
+5. **Per-client behavior is not documented anywhere.** The ops file's [MEASURED-HERE] finding
    stands: there is no per-client feature support matrix in the MCP docs. **Re-checked
    2026-09-18 for the specific claim that Cursor caps tools at 40: that number circulates
    widely and is not in Cursor's own MCP documentation, which states no tool limit at all.**
@@ -641,7 +641,7 @@ non-deterministic `tools/list` ordering.
 
 The literature treats cost and security as separate topics. They are the same lever pulled
 for two reasons, and sometimes the same lever pulled in opposite directions. This section is
-the original contribution of this file. Every claim is sourced; the synthesis is labelled as
+the original contribution of this file. Every claim is sourced; the synthesis is labeled as
 synthesis.
 
 ### 5.1 Does filtering the tool surface reduce attack surface as well as cost?
@@ -690,12 +690,12 @@ The chain, each link sourced:
 2. **Discovery ranks on description text.** Anthropic's tool search searches "tool names,
    descriptions, argument names, and argument descriptions" [PRIMARY]. The spec's catalog
    layer returns "matching tool names with brief descriptions" [PRIMARY].
-3. **Anthropic's own optimisation advice is, mechanically, discovery-ranking advice**: "Add
+3. **Anthropic's own optimization advice is, mechanically, discovery-ranking advice**: "Add
    common keywords to tool descriptions to improve discoverability", "Use keywords in
    descriptions that match how users describe tasks" [PRIMARY].
 
 **[SYNTHESIS, this research, marked as synthesis because no source states it]** Progressive
-discovery creates an incentive gradient that points the wrong way for defence. A server that
+discovery creates an incentive gradient that points the wrong way for defense. A server that
 wants to be selected writes a description engineered to win retrieval, and a server that wants
 to be *maliciously* selected does exactly the same thing with the same technique. Retrieval
 ranking is a new, quiet, per-query channel by which a description competes for the model's
@@ -732,11 +732,11 @@ it.
 - **Less untrusted data reaches the model.** Anthropic: "intermediate results stay in the
   execution environment by default... data you don't wish to share with the model can flow
   through your workflow without ever entering the model's context." Plus automatic
-  tokenisation of PII, so real email addresses "flow from Google Sheets to Salesforce, but
+  tokenization of PII, so real email addresses "flow from Google Sheets to Salesforce, but
   never through the model."
 
 That last one is the underrated security property: **the token-saving mechanism and the
-data-minimisation mechanism are the same mechanism.** Fewer tool results in context is
+data-minimization mechanism are the same mechanism.** Fewer tool results in context is
 simultaneously a smaller bill and a smaller indirect-injection surface, because an injected
 instruction in a tool result cannot reach the model if the result never reaches the model.
 
@@ -762,7 +762,7 @@ the question to ask a vendor, and it is not visible from the outside.
 Four cases, each with a verified basis. This is where "what does the registry actually know"
 gets answered.
 
-| Host behaviour | What the gateway still sees | What it loses | Basis |
+| Host behavior | What the gateway still sees | What it loses | Basis |
 |---|---|---|---|
 | **Progressive tool discovery** (tools deferred in context) | **Everything. `tools/list` is unchanged.** | Nothing | Spec: "The host fetches tool definitions via `tools/list` as normal, but **defers injecting them into the model's context**" [PRIMARY] |
 | **Anthropic / OpenAI native tool search** | Everything, plus full definitions on every API request | Nothing at the MCP layer | "You still send every tool's full definition in the `tools` array on every request" [PRIMARY] |
@@ -892,7 +892,7 @@ whole arc.** Renaming one parameter from `question` to `query` broke, verbatim:
 > "2-5% of requests broke until we supported both names (optional) during a deprecation
 > window."
 
-Their generalisation: "Defensive evolution is part of operating a public service." Despite
+Their generalization: "Defensive evolution is part of operating a public service." Despite
 MCP's dynamic discovery model, clients hardcode schemas.
 
 **[SYNTHESIS]** This is the hidden cost of consolidation, and it is structural. Fewer tools
@@ -914,7 +914,7 @@ LLM with tool choice and reduce the context size."
 
 **This is a genuine fork in the road and the talk should present it as one.** Block moved the
 decision to the server author (two tools, always). GitHub moved it to the deployer (many
-tools, choose). They optimise the same quantity and distribute the authorization decision to
+tools, choose). They optimize the same quantity and distribute the authorization decision to
 different people.
 
 ### 6.4 Cloudflare Code Mode
@@ -1019,9 +1019,9 @@ it without implementing a parser for that second language.
 - **Block states the principle without naming it as a tension**: single risk level per tool,
   don't mix read and write, because it "makes permission settings harder". That is the
   authorization argument for *not* fully consolidating, arrived at from usability.
-- **General Analysis states the remedy without generalising it**: read-only mode would have
+- **General Analysis states the remedy without generalizing it**: read-only mode would have
   prevented it.
-- **Jentic's "The MCP Tool Trap"** critiques tool sprawl and proposes a centralised knowledge
+- **Jentic's "The MCP Tool Trap"** critiques tool sprawl and proposes a centralized knowledge
   layer. Re-checked 2026-09-18: it does **not** address whether consolidation improves or
   worsens security, beyond a general warning that embedding credentials in manifests
   "dramatically expands the agent's attack surface". It is also the source that mis-cites
@@ -1082,7 +1082,7 @@ errors as `isError: true` in a successful result. Clients **SHOULD** pass execut
 the model "to enable self-correction".
 
 **Security considerations for tools.** Servers **MUST** validate all inputs, implement access
-controls, rate limit invocations, and sanitise outputs. Clients **SHOULD** prompt for
+controls, rate limit invocations, and sanitize outputs. Clients **SHOULD** prompt for
 confirmation on sensitive operations, "Show tool inputs to the user before calling the server,
 to avoid malicious or accidental data exfiltration", validate results before passing to the
 LLM, implement timeouts, and "Log tool usage for audit purposes".
@@ -1111,7 +1111,7 @@ caller's authorization against the handle on every call."
   calls): one loop for each evaluation task." Metrics: task accuracy, runtime per call and per
   task, total tool calls, token consumption, tool errors.
 
-Tool-search-specific optimisation guidance [PRIMARY]:
+Tool-search-specific optimization guidance [PRIMARY]:
 - Keep 3-5 most-used tools non-deferred.
 - "Use consistent namespacing in tool names: prefix by service or resource (for example,
   `github_`, `slack_`) so one search matches the whole group."
@@ -1173,7 +1173,7 @@ paragraph about a permission dialog rather than in any vendor's tool-design guid
 ## 10. Numbers that did not survive verification
 
 Additions to the ops file's Section 7. Same discipline: the argument is right, the numbers
-travelled badly.
+traveled badly.
 
 ### 10.1 The Cursor 40-tool cap
 

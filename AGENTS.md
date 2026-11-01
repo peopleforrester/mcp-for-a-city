@@ -54,3 +54,23 @@ is only what appeared on the sources slide.
 - Public prose and factual claims wait for Michael's review. Corrections from
   readers arrive as issues using `.github/ISSUE_TEMPLATE/correction.md`.
 - Specification facts are stated against the 2026-07-28 revision.
+
+## American English
+
+The whole repo is public, so it opts in to the American English check for
+published writing (`claude-config/rules/american-english.md` in
+llm-coding-workflow). [.american-english](.american-english) lists every
+Markdown file. Publishing is the push itself, with no build step, so the check
+runs in two places:
+
+- **Before a push**, from the repo root, stopping on any non-zero exit:
+  `python3 ~/repos/workflow/llm-coding-workflow/scripts/check_american_english.py --published`.
+  Exit 1 means it found a British form. Exit 2 means the opt-in file is
+  missing or empty.
+- **At commit**, on the staged files, through the managed pre-commit. Deploy
+  it once per checkout with
+  `bash ~/repos/workflow/llm-coding-workflow/scripts/git-hooks/deploy.sh .`.
+
+Fix the word. A quotation, URL or proper noun that must keep its British form
+gets an inline `<!-- lexicon: quotation -->` on its line. To exempt a whole
+file, use its frontmatter.

@@ -5,6 +5,18 @@ ABOUTME: Check here before reopening a choice; add an entry when a new one is se
 
 # Decisions
 
+## 2026-11-01: Every Markdown file is published writing for the American English check
+
+The repo is public collateral under CC BY 4.0, and pushing it publishes it, so
+`.american-english` lists `README.md` and `**/*.md`. That includes the working
+research in `06-research-and-source-ledger/`. The first run found 216 British
+forms there, and they were changed to American spelling with the wording left
+as it was. Three stay British behind an inline `lexicon:` marker: a verbatim
+quotation from the spec, a quotation from a paper and a URL slug. With no
+build step, the managed pre-commit and the
+`--published` run before a push are the publish step. Issue #16, from
+peopleforrester/llm-coding-workflow#412.
+
 ## 2026-10-16: No end-to-end command; the link check is the whole gate
 
 The heavy gate runs an end-to-end command only where a repo has end-to-end,
