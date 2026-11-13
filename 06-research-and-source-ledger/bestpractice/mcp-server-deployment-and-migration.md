@@ -803,7 +803,7 @@ That asymmetry is worth naming.
 (B13) and are also supported on `server/discover`. `cacheScope` takes `"public"`
 or `"private"` and governs whether a shared intermediary may cache the result.
 Getting it wrong on a multi-tenant server is tenant-data disclosure through a
-CDN; that failure mode is catalogued as F15 in `06-research-and-source-ledger/ops/`.
+CDN; that failure mode is cataloged as F15 in `06-research-and-source-ledger/ops/`.
 
 ### 5.4 Long-running operations and streams
 
@@ -828,7 +828,7 @@ are easy to miss, verbatim:
 > timeouts during quiet periods
 
 The keep-alive guidance pairs directly with the layered-idle-timeout failure mode
-catalogued as F10 in `06-research-and-source-ledger/ops/` from the AWS Architecture Blog. The spec
+cataloged as F10 in `06-research-and-source-ledger/ops/` from the AWS Architecture Blog. The spec
 names the mitigation; the AWS post names the three tiers whose timeouts have to
 agree.
 
@@ -857,7 +857,7 @@ agree.
 > Clients **SHOULD** provide tool execution errors to language models to enable
 > self-correction.
 
-The operational consequence, catalogued as F13 in `06-research-and-source-ledger/ops/`: a tool
+The operational consequence, cataloged as F13 in `06-research-and-source-ledger/ops/`: a tool
 execution error is a JSON-RPC *result*, carried on a successful HTTP response.
 Monitoring that alarms on 5xx sees a perfectly healthy server while every tool
 call fails. **Any MCP server SLO built on HTTP status codes is measuring the
@@ -1104,7 +1104,7 @@ scanning outward. **[OFFICIAL]** From the registry docs, quoted in
 So the supply-chain answer in the official ecosystem is "npm, PyPI and whoever
 aggregates us". Do not present a container hardening standard as MCP guidance;
 there is not one. Vendor gateway and catalog approaches (Docker MCP Gateway,
-Stacklok ToolHive, IBM Context Forge, Kong, agentgateway) are catalogued with
+Stacklok ToolHive, IBM Context Forge, Kong, agentgateway) are cataloged with
 URLs in `06-research-and-source-ledger/scale/mcp-at-scale-architecture-2026-09.md` and are **[VENDOR]**
 by construction.
 
